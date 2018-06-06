@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1">
+    <meta name="description" content="xeon">
+    <meta name="author" content="">
+	
+	    <!-- Bootstrap core CSS -->
+    <link rel=stylesheet type=text/css href="../static/style.css">
+    <link href="../static/bootstrap.min.css" rel="stylesheet">
+	<link href="../static/signin.css" rel="stylesheet">
+	
+
+		
+    
+	<!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+	<link href="../static/ie10-viewport-bug-workaround.css" rel="stylesheet">
+
+	
+	
+	<script src="../static/jquery.min.js"></script>
+	<script src="../static/bootstrap.min.js"></script>
+	
+
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="https://cdn.bootcss.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+      <script src="https://cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+	
+<title>Login</title>
+
+</head>
+
+
+<body>
+<div class="container">
+
+  <form class="form-signin" action= "/login" method=post>
+        <p> <img src="../static/xeon.png" class="img-responsive" alt="Cinque Terre"> </p>
+  
+        <h2 class="form-signin-heading">打卡系统</h2>
+		 <!--{% if error %}<p class=error><strong>Error:</strong> {{ error }}{% endif %}-->
+		<label for="username" class="sr-only">用户名</label>
+        <input type=text id="username" name=username class="form-control" placeholder="请输入用户名" required autofocus>
+		<label for="Password" class="sr-only">密码</label>
+        <input type=password id="Password" name=Password class="form-control" placeholder="请输入密码" required>
+		
+        <div class="checkbox">
+          <label>
+            <input type="checkbox" value="remember-me"> 记住我
+			
+          </label>
+		  <a href="/forget" class="pull-right">忘记密码</a>
+	    <button class="btn btn-lg btn-primary btn-block" type="submit">登录</button>
+
+		</div>
+  </form>
+   
+   
+</div>
+</body>
+</html>
