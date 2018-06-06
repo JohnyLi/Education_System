@@ -42,12 +42,12 @@
   <form class="form-signin" action= "/login" method=post>
         <p> <img src="../static/xeon.png" class="img-responsive" alt="Cinque Terre"> </p>
   
-        <h2 class="form-signin-heading">打卡系统</h2>
-		 <!--{% if error %}<p class=error><strong>Error:</strong> {{ error }}{% endif %}-->
+        <h2 class="form-signin-heading">Education System</h2>
+		{% if error %}<p class=error><strong>Error:</strong> {{ error }}</p>{% endif %}
 		<label for="username" class="sr-only">用户名</label>
         <input type=text id="username" name=username class="form-control" placeholder="请输入用户名" required autofocus>
 		<label for="Password" class="sr-only">密码</label>
-        <input type=password id="Password" name=Password class="form-control" placeholder="请输入密码" required>
+        <input type=password id="password" name=password class="form-control" placeholder="请输入密码" required>
 		
         <div class="checkbox">
           <label>
