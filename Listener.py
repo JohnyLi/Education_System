@@ -4,8 +4,9 @@ from flask_cors import CORS
 from Config import Config
 from Config.Link_db import *
 from SQL_libarary.SQL_Account import *
-from hashlib import sha1
+from SQL_libarary.Func_lib import *
 
+#---------------------------------------------全局配置--------------------------------------------#
 
 #Flask app 相关配置
 app=Flask(__name__)
@@ -14,16 +15,25 @@ app.config.from_envvar('FLASKR_SETTINGS', silent=True)
 CORS(app, supports_credentials=True)    #跨域
 
 #全局变量配置
+myconfig=Aconfig()
 
+route_section="route"
+config_path="Config/config.ini"
+
+allurl=ArrayToDict(myconfig.getsection(route_section))
+login_url=myconfig.getvalue(route_section,"login")
+myinformation_url=myconfig.getvalue(route_section,"myinformation")
 
 #数据库配置
 db=Link_db()  #与数据库建立连接
 Account = SQL_Account(db)
 
 
-#--------------------------------------------------------------------------------------------------#
+#---------------------------------------------全局配置--------------------------------------------#
+#===============================================页面==============================================#
 #登录界面
-@app.route('/login', methods=['GET', 'POST'])
+@app.route('/')
+@app.route(login_url, methods=['GET', 'POST'])
 def login():
     error = None
 
@@ -39,38 +49,38 @@ def login():
             if (AccountSHAPassword!=SHA_password):
                 error = '用户名或密码错误'
             else:
-                priority = myAccount[3]
-                session['UserName']=username
-                session['Login']=True
-                return redirect(url_for('main'),priority)
+                privilege = myAccount[3]
+                session['username']=username
+                session['login']=True
+                session['privilege']=privilege
+                return redirect(url_for('myinformation'))
 
 
-    if session.get('Login')==True:
-        if session.get('UserName'):
-            username=session['UserName']
-            myAccount=Account.GetInfor(username)
-            if(len(myAccount)==1):
-                priority = myAccount[3]
-                return redirect(url_for('main'),priority)
-            else:
-                session.pop('username',None)
-                session.pop('Login',None)
+    if session.get('login') and session.get('username') and session.get('privilege'):
+        return redirect(url_for('myinformation'))
+    else:
+        session.clear()
 
-    return render_template('Login.html', error=error)
+    return render_template('login.html', error=error)
 
-
-
-
-
-def GetSHA(var):   #此为SHA单向不可逆加密
-    result = sha1()
-    result.update(var.encode('utf-8'))
-    return result.hexdigest()
+###################################################################################################
+@app.route(myinformation_url, methods=['GET', 'POST'])
+def myinformation():
+    if not (session.get('login') and session.get('username') and session.get('privilege')):
+        session.clear()
+        return redirect(url_for('login'))
 
 
 
 
 
+
+
+
+
+
+#===============================================页面==============================================#
+#...............................................main..............................................#
 if __name__ == '__main__':
     app.run(host='0.0.0.0',port=80)
 

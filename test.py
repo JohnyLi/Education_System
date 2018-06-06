@@ -6,4 +6,9 @@ database=SQL_Account(db)
 
 print(database.GetInfor("jack"))
 
+myconfig=Aconfig()
+#database config
+address=myconfig.getsection("route")
+mydict=ArrayToDict(address)
+print(mydict)
 

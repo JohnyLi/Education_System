@@ -10,3 +10,6 @@ students elective management and so on.
 * Server language: Python 3.6
 * Server framework: Flask
 * Database: MySql
+## Why Flask
+Because I have no time, I use this simple framework instead of Spring.
+## File Directory

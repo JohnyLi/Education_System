@@ -1,16 +1,18 @@
 #!/usr/bin/python3
 import pymysql
-from Config import Config
+from Config.Config import *
 
-config_path="Config/config.ini"
+
 config_section="database"
 
 #database config
-address=Config.getvalue(config_path,config_section,"dbhost")
-port=Config.getvalue(config_path,config_section,"dbport")
-databaseName=Config.getvalue(config_path,config_section,"dbname")
-username=Config.getvalue(config_path,config_section,"dbuser")
-password=Config.getvalue(config_path,config_section,"dbpassword")
+myconfig=Aconfig()
+
+address=myconfig.getvalue(config_section,"dbhost")
+port=myconfig.getvalue(config_section,"dbport")
+databaseName=myconfig.getvalue(config_section,"dbname")
+username=myconfig.getvalue(config_section,"dbuser")
+password=myconfig.getvalue(config_section,"dbpassword")
 
 class Link_db:
     def __init__(self):

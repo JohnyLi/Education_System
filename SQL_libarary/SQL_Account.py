@@ -1,13 +1,14 @@
 from Config.Link_db import *
-from hashlib import sha1
+from Config.Config import *
 import time
+from SQL_libarary.Func_lib import *
 
-config_path="Config/config.ini"
-config_section="table"
+table_section="table"
 
+myconfig=Aconfig()
 #table name config
-AccountTable=Config.getvalue(config_path,config_section,"AccountTable")
-LogTable=Config.getvalue(config_path,config_section,"LogTable")
+AccountTable=myconfig.getvalue(table_section,"AccountTable")
+LogTable=myconfig.getvalue(table_section,"LogTable")
 
 
 class SQL_Account:
@@ -36,23 +37,23 @@ class SQL_Account:
         # 将密码加密
         SHA_password=GetSHA(password)
         sql = " update %s set password='%s' where username='%s'" % (AccountTable,SHA_password ,username)
-        state = self.__db.update(sql)
-        return state
+        status = self.__db.update(sql)
+        return status
 
 
     #增加一条用户账号密码
-    def InsertAccount(self,username,password,priority):
+    def InsertAccount(self,username,password,privilege):
         # 将密码加密
         SHA_password = GetSHA(password)
-        sql = " insert into %s (username,password,priority) values('%s','%s',%d)" % (AccountTable,username,SHA_password,priority)
-        state = self.__db.update(sql)
-        return state
+        sql = " insert into %s (username,password,privilege) values('%s','%s',%d)" % (AccountTable,username,SHA_password,privilege)
+        status = self.__db.update(sql)
+        return status
 
     #删除一条用户账号密码
     def DeleteAccount(self,username):
         sql = " delete from %s where username = '%s' " %(AccountTable,username)
-        state = self.__db.update(sql)
-        return state
+        status = self.__db.update(sql)
+        return status
 
     #往日志中增加一条日志
     def insert(self, username, operation):
@@ -60,13 +61,10 @@ class SQL_Account:
         sql = "insert into %s (userid,operation,Time) " \
               "select userid , '%s' , '%s' from %s where username='%s' " % (
               LogTable, operation, Time, AccountTable, username)
-        state = self.__db.update(sql)
-        return state
+        status = self.__db.update(sql)
+        return status
 
-def GetSHA(var):   #此为SHA单向不可逆加密
-    result = sha1()
-    result.update(var.encode('utf-8'))
-    return result.hexdigest()
+
 
 
 

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="description" content="Education System">
+	<meta name="author" content="邹紫荆,李皓俊">
+	<link href="../static/bootstrap.min.css" rel="stylesheet">
+	<script src="http://cdn.static.runoob.com/libs/jquery/2.1.1/jquery.min.js"></script>
+	<script src="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="https://cdn.bootcss.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+      <script src="https://cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+	{% if privilege == 3 %}
+	<title>管理员端</title>
+	{% elif	privilege == 2 %}
+	<title>教师端</title>
+	{% elif	privilege == 1 %}
+	<title>学生端</title>
+	{% endif %}
+	<script type="text/javascript">
+	
+	</script>
+	
+  </head>
+  <body>
+  
+	    <nav class="navbar navbar-inverse navbar-fixed-top">
+		  <div class="container-fluid">
+			<div class="navbar-header">
+			  <a class="navbar-brand" href="/introduction">Education System</a>
+			</div>
+			<div id="navbar" class="navbar-collapse collapse">
+			  <ul class="nav navbar-nav navbar-right">
+				<li><a href="/myinformation/change">个人信息修改</a></li>
+				<li><a href="/logout">退出当前账号</a></li>
+			  </ul>
+			</div>
+		  </div>
+		</nav>
+  
+		<div class="container-fluid">
+		  <div class="row">
+			<div class="col-sm-3 col-md-2 sidebar">
+			  <ul class="nav nav-sidebar">
+			  {% for bar in sidebar %}
+				<li {% if bar.active=="active" %}class="active"{% endif %}>
+					<a href="{{ bar.href }}">{{ bar.name }}</a>
+				</li>
+			  {% endfor %}
+			  </ul>
+			</div>
+			
+			<div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+			<p class="text-right">{{ username }}  欢迎你！</p>
+			
+			
+				{% block body %}{% endblock %}
+				
+				
+			</div>
+		  </div>
+		</div>
+  
+  
+
+	
+	
+	
+	
+  </body>
+</html>

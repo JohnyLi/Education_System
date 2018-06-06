@@ -1,7 +1,15 @@
 import configparser
 
-def getvalue(path,section,key):
-    config = configparser.ConfigParser()
-    config.read(path)
-    value=config.get(section,key)
-    return value
+config_path="Config/config.ini"
+
+class Aconfig:
+    def __init__(self):
+        self.__config = configparser.ConfigParser()
+        self.__config.read(config_path)
+    def getvalue(self,section,key):
+        value=self.__config.get(section,key)
+        return value
+
+    def getsection(self,section):
+        section = self.__config.items(section)
+        return section
