@@ -4,7 +4,7 @@ import time
 from SQL_libarary.Func_lib import *
 
 #此类作为对Account表进行操作的sql方法的libarary
-#Account表为存放用户账号密码的表
+#Account表为存放用户账号、密码和权限的表
 
 #---------------------------------------------全局配置--------------------------------------------#
 
@@ -14,8 +14,8 @@ table_section="table"
 myconfig=Aconfig()#获取config配置
 
 
-AccountTable=myconfig.getvalue(table_section,"AccountTable")    #获取表名
-LogTable=myconfig.getvalue(table_section,"LogTable")    #获取日志表
+AccountTable=myconfig.getvalue(table_section,"AccountTable")    #获取Account表名
+LogTable=myconfig.getvalue(table_section,"LogTable")    #获取日志表名
 
 #---------------------------------------------全局配置--------------------------------------------#
 

@@ -60,6 +60,10 @@ class Link_db:
             self.__cursor = self.__db.cursor()
         except:
             print("连接数据库失败")
+            
+    #数据库重置
+    def reset(self):
+
 
 
 
