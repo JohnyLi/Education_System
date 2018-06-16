@@ -3,19 +3,27 @@ from Config.Config import *
 import time
 from SQL_libarary.Func_lib import *
 
+#此类作为对Account表进行操作的sql方法的libarary
+#Account表为存放用户账号密码的表
+
+#---------------------------------------------全局配置--------------------------------------------#
+
 table_section="table"
-
-myconfig=Aconfig()
 #table name config
-AccountTable=myconfig.getvalue(table_section,"AccountTable")
-LogTable=myconfig.getvalue(table_section,"LogTable")
 
+myconfig=Aconfig()#获取config配置
+
+
+AccountTable=myconfig.getvalue(table_section,"AccountTable")    #获取表名
+LogTable=myconfig.getvalue(table_section,"LogTable")    #获取日志表
+
+#---------------------------------------------全局配置--------------------------------------------#
 
 class SQL_Account:
 
     #初始化在类中储存数据库连接
     def __init__(self,db):
-        self.__db = db
+        self.__db = db  #获取与database的连接的class
 
     #获得用户账号密码整个表
     def GetAllInfor(self):

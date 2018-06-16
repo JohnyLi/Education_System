@@ -1,7 +1,9 @@
 import configparser
 
+#此类用于对config.ini进行操作和查询
+#---------------------------------------------全局配置--------------------------------------------#
 config_path="Config/config.ini"
-
+#---------------------------------------------全局配置--------------------------------------------#
 class Aconfig:
     def __init__(self):
         self.__config = configparser.ConfigParser()
