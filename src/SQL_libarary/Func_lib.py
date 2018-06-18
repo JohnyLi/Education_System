@@ -26,3 +26,12 @@ def ArrayToDict(array): #将array变成dict,将莫名其妙的数据结构整理
     for i in array:
         mydict[i[0]]=i[1]
     return mydict
+
+def SetDate(date):
+    mydate=date.split('.')
+    sentence=''
+    for i in range(len(mydate)):
+        sentence+=mydate[i]
+        if(i!=len(mydate)-1):
+            sentence+=','
+    return sentence

@@ -1,10 +1,12 @@
 #!/usr/bin/python3
-from flask import Flask, request, session,redirect, url_for,render_template,g
+from flask import Flask, request, session,redirect, url_for,render_template,g,jsonify
 from flask_cors import CORS
 from Config import Config
 from Config.Link_db import *
 from SQL_libarary.SQL_Account import *
+from SQL_libarary.SQL_Infor import *
 from SQL_libarary.Func_lib import *
+import json
 
 #---------------------------------------------全局配置--------------------------------------------#
 #全局变量配置
@@ -23,6 +25,7 @@ route_section="route"
 
 login_url=myconfig.getvalue(route_section,"login")
 myinformation_url=myconfig.getvalue(route_section,"myinformation")
+changeinformation_url=myconfig.getvalue(route_section,"changeinformation")
 introduction_url=myconfig.getvalue(route_section,"introduction")
 logout_url=myconfig.getvalue(route_section,"logout")
 
@@ -32,7 +35,7 @@ teacherbar={'查看个人信息':myinformation_url}
 adminbar={'查看个人信息':myinformation_url}
 
 
-
+start="1950,1,1"
 #---------------------------------------------全局配置--------------------------------------------#
 #===============================================页面==============================================#
 '''
@@ -101,11 +104,61 @@ def myinformation():
     if not (session.get('login') and session.get('username') and session.get('privilege')):
         return redirect(url_for('logout'))
 
+###################################################################################################
+@app.route(changeinformation_url, methods=['GET', 'POST'])
+def changeinformation():
+    Infor=SQL_Infor(get_db())
+    Account=SQL_Account(get_db())
+    # 检查cookie是否为登录状态
+    if not (session.get('login') and session.get('username') and session.get('privilege')):
+        return redirect(url_for('logout'))
+    if(request.method=="POST"):
+        myjson = json.loads(request.get_data())
+        result={'status':''}
+        username = myjson['username']
+        oldpassword = myjson['oldpassword']
+
+        if not(Account.CheckPassword(username,oldpassword)):
+            result['status']="原密码错误"
+            return jsonify(result)
+
+        newpassword=myjson['newpassword']
+        if(newpassword!=""):
+            if(Account.UpdateAccount(username,newpassword)==1):
+                result['status']="修改密码成功\n"
+            else:
+                result['status'] = "修改密码失败\n"
+
+        sex=myjson['sex']
+        born=myjson['born']
+        telephone=myjson['telephone']
+        if(Infor.UpdateInfor(username,telephone,sex,born)==1):
+                result['status'] += "修改信息成功"
+        else:
+            result['status'] += "修改信息失败"
+
+        return jsonify(result)
 
 
 
+    username = session['username']
+    p = session['privilege']
+    sidebar = GetSideBar(GetBar(p))
+
+    user = { "telephone": "",'sex': "无", 'born': "2000.1.1"}
+    userinfor=Infor.GetInfor(username)
+    if(len(userinfor)!=1):
+        pass
+    else:
+        myinfor=userinfor[0]
+        user['telephone']=myinfor[1]
+        user['sex']=myinfor[2]
+        user['born']=myinfor[3]
+
+    return render_template("changeinformation.html",username=username,sidebar=sidebar,start=start,user=user)
 
 
+###################################################################################################
 @app.route(logout_url)
 def logout():
     session.clear()

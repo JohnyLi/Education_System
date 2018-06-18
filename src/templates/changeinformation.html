@@ -1,0 +1,202 @@
+{% extends "layout.html" %}
+{% block body %}
+
+
+
+
+<h2> 修改个人信息</h2>
+</br>
+		
+<div class="container">
+	<div class="col-sm-5">
+	
+	<label for="username">用户名</label>
+	<input type=text id="username" name=username class="form-control" value="{{ username }}" readonly="readonly">
+	</br>
+	
+	<label for="ex" id="sexlabel">性别</label>
+	<div class="btn-group">
+		<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" id="sex">
+			{{ user.sex }}
+		</button>
+		<ul class="dropdown-menu" role="menu">
+			<li><a href="javascript:void(0);" onclick="sex('男')">男</a></li>
+			<li><a href="javascript:void(0);" onclick="sex('女')">女</a></li>
+		</ul>
+	</div>
+	</br>
+	</br>
+	
+	<label for="telephone">电话号码</label>
+	<input type=text id="telephone" name=telephone class="form-control" value="{{ user.telephone }}">
+	</br>
+	
+	<label for="born">出生日期</label>
+	<div class="input-append date form_datetime" id="datetimepicker1" data-date="" data-date-format="yyyy.mm.dd">
+	<input class="form-control"  id="nowdate" type="text" value="" readonly>
+	<span class="add-on"><i class="icon-th"></i></span>
+	</div>
+	</br>
+	
+	<label for="oldassword" id="oplabel">原密码</label>
+	<input type=password id="oldpassword" name=oldpassword class="form-control" placeholder="请输入原密码" required>
+	</br>
+	
+	
+	<label for="newpassword" >
+	 新密码&nbsp <input type="checkbox" value="" id="checkbox1" >
+	</label>
+	<input type=password id="newpassword" name=newassword readonly='readonly'
+	class="form-control" placeholder="">
+	</br>
+	
+	
+	<button class="btn btn-danger" onclick="changeinformation();" >确认修改</button>
+	
+	 
+	 </div>
+</div>
+
+
+
+
+
+
+
+
+
+<link href="../static/css/bootstrap-datetimepicker.min.css" rel="stylesheet" />
+<script src="../static/js/moment-with-locales.js"></script>
+<script src="../static/js/bootstrap-datetimepicker.min.js"></script>
+<script src="../static/js/bootstrap-datetimepicker.zh-CN.js"></script>
+
+
+<script type="text/javascript">
+var un="{{ username }}";
+var sx="{{ user.sex }}";
+var tp="{{ user.telephone }}";
+var bn="{{ user.born }}";
+var checked=false;
+function changeinformation(){
+		var username=$('#username').val();
+		var born=$("#nowdate").val();
+		var sex=$("#sex").html();
+		var telephone=$('#telephone').val();
+		var op=$('#oldpassword').val();
+		var np=$('#newpassword').val();
+		if(op==""){
+			var x=$('#oplabel').html('必须填写原密码！');
+			return;
+		}
+		else{
+			var x=$('#oplabel').html('原密码');
+		}
+		if(sex!="男"&&sex!="女"){
+			var x=$('#sexlabel').html('不可以无性别！');
+			return;
+		}
+		else{
+			var x=$('#sexlabel').html('性别');
+		}
+		
+		if(checked==false){
+		var dict1={'username':username,'oldpassword':op,'born':born,'sex':sex,'telephone':telephone,'caozuo':'infor'};
+		$.ajax({
+			  type: "post",
+			  contentType: "application/json; charset=UTF-8",
+			  url: "/myinformation",
+			  xhrFields: {withCredentials: true},
+			  crossDomain: true,
+			  dataType: 'json',
+			  data:JSON.stringify(dict1),
+			  success:function(data){
+								 alert(data.status);
+								 location.replace(location.href);
+								}
+								});
+		}
+		else{
+		var dict1={'username':username,'oldpassword':op,'newpassword':np,'caozuo':'password'};
+		$.ajax({
+			  type: "post",
+			  contentType: "application/json; charset=UTF-8",
+			  url: "/myinformation",
+			  xhrFields: {withCredentials: true},
+			  crossDomain: true,
+			  dataType: 'json',
+			  data:JSON.stringify(dict1),
+			  success:function(data){
+								 alert(data.status);
+								 location.replace(location.href);
+								}
+								});
+		
+		
+		
+		
+		
+		
+		}
+	
+	}
+
+
+function sex(s) {
+	var x=$("#sex").html(s);
+
+}
+
+function setdate(){
+
+if(checked==true){
+	$("#nowdate").val(bn);
+	}
+setTimeout("setdate()",250);
+
+}
+
+$("#checkbox1").change(function() {
+		if($("#checkbox1").prop("checked")){
+			$('#newpassword').attr('readonly',false);
+			$('#newpassword').attr('placeholder',"请输入新密码");
+			$("#nowdate").val(bn);
+			$("#sex").attr('disabled',true);
+			$("#sex").html(sx);
+			$("#telephone").attr('readonly',true);
+			$("#telephone").val(tp);
+			checked=true;
+		}
+		else{
+		$('#newpassword').attr('readonly',true);
+		$('#newpassword').attr('placeholder',"");
+		$("#newpassword").val("");
+		$("#sex").attr('disabled',false);
+		$("#telephone").attr('readonly',false);
+		checked=false;
+		}
+	});
+
+var today = new Date();
+document.getElementById("nowdate").value = "{{ user.born }}";
+
+setTimeout("setdate()",1000);
+
+$('#datetimepicker1').datetimepicker({
+	format: 'yyyy.mm.dd',
+	minView: "month",
+	initialDate: new Date(),
+	startDate: new Date({{start}}),
+	endDate: new Date(today.getFullYear(),today.getMonth(),today.getDate()),
+	autoclose: true,
+	todayBtn: true,
+	locale: moment.locale('zh-cn'),
+	
+});
+
+
+
+</script>
+
+
+
+{% endblock %}

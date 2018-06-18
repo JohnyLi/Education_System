@@ -25,6 +25,15 @@ class SQL_Account:
     def __init__(self,db):
         self.__db = db  #获取与database的连接的class
 
+        # 往日志中增加一条日志
+    def insertlog(self, username, operation):
+            Time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+            sql = "insert into %s (userid,operation,Time) " \
+                  "select userid , '%s' , '%s' from %s where username='%s' " % (
+                      LogTable, operation, Time, AccountTable, username)
+            status = self.__db.update(sql)
+            return status
+
     #获得用户账号密码整个表
     def GetAllInfor(self):
         sql = " select * from %s" % (AccountTable)
@@ -39,6 +48,14 @@ class SQL_Account:
             return data
         else:
             return None
+    def CheckPassword(self,username,password):
+        sql = " select password from %s where username='%s'" % (AccountTable, username)
+        data = self.__db.select(sql)
+        data=data[0][0]
+        if(data==GetSHA(password)):
+            return True
+        else:
+            return False
 
     #修改密码
     def UpdateAccount(self,username,password):
@@ -46,6 +63,7 @@ class SQL_Account:
         SHA_password=GetSHA(password)
         sql = " update %s set password='%s' where username='%s'" % (AccountTable,SHA_password ,username)
         status = self.__db.update(sql)
+        self.insertlog(username,"修改密码")
         return status
 
 
@@ -55,22 +73,17 @@ class SQL_Account:
         SHA_password = GetSHA(password)
         sql = " insert into %s (username,password,privilege) values('%s','%s',%d)" % (AccountTable,username,SHA_password,privilege)
         status = self.__db.update(sql)
+        self.insertlog("admin", "增加用户")
         return status
 
     #删除一条用户账号密码
     def DeleteAccount(self,username):
         sql = " delete from %s where username = '%s' " %(AccountTable,username)
         status = self.__db.update(sql)
+        self.insertlog("admin", "删除用户")
         return status
 
-    #往日志中增加一条日志
-    def insert(self, username, operation):
-        Time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
-        sql = "insert into %s (userid,operation,Time) " \
-              "select userid , '%s' , '%s' from %s where username='%s' " % (
-              LogTable, operation, Time, AccountTable, username)
-        status = self.__db.update(sql)
-        return status
+
 
 
 

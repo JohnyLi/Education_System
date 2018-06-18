@@ -4,6 +4,38 @@
 
 
 
+<h2> 修改个人信息</h2>
+</br>
+		
+<div class="container">
+	<div class="col-sm-5">
+	
+	<label for="username">用户名</label>
+	<input type=text id="username" name=username class="form-control" value="{{ username }}" readonly="readonly">
+	</br>
+	
+	<div class="btn-group">
+		<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" id="sex">
+			{{ sex }} <span class="caret"></span>
+		</button>
+		<ul class="dropdown-menu" role="menu">
+			<li><a href="javascript:void(0);" onclick="sex('男')">男</a></li>
+			<li><a href="javascript:void(0);" onclick="sex('女')">女</a></li>
+		</ul>
+	</div>
+	
+	<label for="oldassword" id="oplabel">原密码</label>
+	<input type=password id="oldpassword" name=oldpassword class="form-control" placeholder="请输入原密码" required>
+	</br>
+	
+	<label for="newpassword" id="nplabel">新密码</label>
+	<input type=password id="newpassword" name=newpassword class="form-control" placeholder="请输入新密码">
+	</br>
+	<button class="btn btn-danger" onclick="changeinformation();" >确认修改</button>
+	
+	 
+	 </div>
+</div>
 
 
 
@@ -16,6 +48,43 @@
 
 
 
+<script type="text/javascript">
+
+
+function changeinformation(){
+		var username=$('#username').val();
+		var op=$('#oldpassword').val();
+		var np=$('#newpassword').val();
+		if(op==""){
+			var x=$('#oplabel').html('必须填写原密码！');
+			return;
+		}
+		else{
+			var x=$('#oplabel').html('原密码');
+		}
+		if(np==""){
+			var x=$('#nplabel').html('必须填写新密码！');
+			return;
+		}
+		else{
+			var x=$('#nplabel').html('新密码');
+		}
+		var dict1={'username':username,'oldpassword':op,'newpassword':np};
+		$.ajax({
+			  type: "post",
+			  contentType: "application/json; charset=UTF-8",
+			  url: "/myinformation",
+			  xhrFields: {withCredentials: true},
+			  crossDomain: true,
+			  dataType: 'json',
+			  data:JSON.stringify(dict1),
+			  success:function(data){
+								 alert(data.status);
+								 location.replace(location.href);
+								}
+								});
+	
+	}
 
 
 
@@ -24,12 +93,7 @@
 
 
 
-
-
-
-
-
-
+</script>
 
 
 
