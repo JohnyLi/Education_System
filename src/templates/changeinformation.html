@@ -16,9 +16,7 @@
 	
 	<label for="ex" id="sexlabel">性别</label>
 	<div class="btn-group">
-		<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" id="sex">
-			{{ user.sex }}
-		</button>
+		<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" id="sex">{{ user.sex }}</button>
 		<ul class="dropdown-menu" role="menu">
 			<li><a href="javascript:void(0);" onclick="sex('男')">男</a></li>
 			<li><a href="javascript:void(0);" onclick="sex('女')">女</a></li>
@@ -33,7 +31,7 @@
 	
 	<label for="born">出生日期</label>
 	<div class="input-append date form_datetime" id="datetimepicker1" data-date="" data-date-format="yyyy.mm.dd">
-	<input class="form-control"  id="nowdate" type="text" value="" readonly>
+	<input class="form-control"  id="nowdate" type="text" value="" >
 	<span class="add-on"><i class="icon-th"></i></span>
 	</div>
 	</br>
@@ -104,7 +102,7 @@ function changeinformation(){
 		$.ajax({
 			  type: "post",
 			  contentType: "application/json; charset=UTF-8",
-			  url: "/myinformation",
+			  url: "/myinformation/change",
 			  xhrFields: {withCredentials: true},
 			  crossDomain: true,
 			  dataType: 'json',
@@ -120,14 +118,14 @@ function changeinformation(){
 		$.ajax({
 			  type: "post",
 			  contentType: "application/json; charset=UTF-8",
-			  url: "/myinformation",
+			  url: "/myinformation/change",
 			  xhrFields: {withCredentials: true},
 			  crossDomain: true,
 			  dataType: 'json',
 			  data:JSON.stringify(dict1),
 			  success:function(data){
 								 alert(data.status);
-								 location.replace(location.href);
+								 location.replace("/login");
 								}
 								});
 		
@@ -160,6 +158,7 @@ $("#checkbox1").change(function() {
 			$('#newpassword').attr('readonly',false);
 			$('#newpassword').attr('placeholder',"请输入新密码");
 			$("#nowdate").val(bn);
+			$('#nowdate').attr('readonly','readonly');
 			$("#sex").attr('disabled',true);
 			$("#sex").html(sx);
 			$("#telephone").attr('readonly',true);
@@ -171,6 +170,7 @@ $("#checkbox1").change(function() {
 		$('#newpassword').attr('placeholder',"");
 		$("#newpassword").val("");
 		$("#sex").attr('disabled',false);
+		$('#nowdate').attr('readonly',false);
 		$("#telephone").attr('readonly',false);
 		checked=false;
 		}

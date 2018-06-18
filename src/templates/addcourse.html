@@ -1,0 +1,69 @@
+{% extends "layout.html" %}
+{% block body %}
+
+<h2>增加一个新的课程</h2>
+<br/>
+
+<div class="container">
+	<div class="col-sm-5">
+	<label for="username" id="label_u">执教老师</label>
+	{% if p==2 %}	
+	<input type=text id="username1" name=username class="form-control" value="{{ username }}" readonly="readonly">
+	{% elif p==3 %}
+	<div class="btn-group">
+		<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" id="username1">未选</button>
+		<ul class="dropdown-menu" role="menu">
+			{% for i in teachers %}
+			<li><a href="javascript:void(0);" onclick="teacher('{{ i }}')">{{ i }}</a></li>
+			{% endfor %}
+		</ul>
+	</div>
+	{% endif %}
+	<br/>
+	<label for="course">科目名称</label>
+	<input type=text id="course" name=course class="form-control" value="">
+	<br/>
+	<button class="btn btn-danger" onclick="add({{p}});" >确认提交</button>
+	</div>
+</div>
+
+
+<script type="text/javascript">
+
+function add(p){
+	var username;
+	if(p==2)
+		username=$("#username1").val();
+	else if(p==3)
+		username=$("#username1").html();
+	var course=$("#course").val();
+	if(username=="未选"){
+		$("#label_u").html("执教老师不可为空");
+		return;
+	}
+	var dict1={'username':username,"course":course};
+	$.ajax({
+			  type: "post",
+			  contentType: "application/json; charset=UTF-8",
+			  url: "/course/add",
+			  xhrFields: {withCredentials: true},
+			  crossDomain: true,
+			  dataType: 'json',
+			  data:JSON.stringify(dict1),
+			  success:function(data){
+								 alert(data.status);
+								 location.replace(location.href);
+								}
+	});
+
+}
+{% if p==3 %}
+function teacher(s){
+var x=$("#username1").html(s);
+}
+{% endif %}
+
+
+
+</script>
+{% endblock %}

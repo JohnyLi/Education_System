@@ -1,0 +1,26 @@
+{% extends "layout.html" %}
+{% block body %}
+
+<h2>我的课程</h2>
+<br/>
+{% for course in mycourse %}
+<button class="btn" onclick="go('{{ course.name }}');">{{ course.name }}</button>
+{% else %}
+<p>还未选过课</p>
+<button class="btn btn-primary" onclick="window.location.href='/course/select';">现在去选课</button>
+
+{% endfor %}
+
+
+
+<script type="text/javascript">
+function go(name){
+	var href="/course?course="+name;
+	window.location.href=href;
+}
+
+
+
+
+</script>
+{% endblock %}

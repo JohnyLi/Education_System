@@ -5,6 +5,7 @@ from Config import Config
 from Config.Link_db import *
 from SQL_libarary.SQL_Account import *
 from SQL_libarary.SQL_Infor import *
+from SQL_libarary.SQL_Course import *
 from SQL_libarary.Func_lib import *
 import json
 
@@ -27,12 +28,15 @@ login_url=myconfig.getvalue(route_section,"login")
 myinformation_url=myconfig.getvalue(route_section,"myinformation")
 changeinformation_url=myconfig.getvalue(route_section,"changeinformation")
 introduction_url=myconfig.getvalue(route_section,"introduction")
+select_url=myconfig.getvalue(route_section,"select")
+addcourse_url=myconfig.getvalue(route_section,"addcourse")
+course_url=myconfig.getvalue(route_section,"course")
 logout_url=myconfig.getvalue(route_section,"logout")
 
 
-studentbar={'查看个人信息':myinformation_url}
-teacherbar={'查看个人信息':myinformation_url}
-adminbar={'查看个人信息':myinformation_url}
+studentbar={'查看个人信息':myinformation_url,'我的课程':course_url,'选课':select_url}
+teacherbar={'查看个人信息':myinformation_url,'我的课程':course_url,'创建课程':addcourse_url}
+adminbar={'查看个人信息':myinformation_url,'我的课程':course_url,'创建课程':addcourse_url}
 
 
 start="1950,1,1"
@@ -100,9 +104,26 @@ def introduction():
 ###################################################################################################
 @app.route(myinformation_url, methods=['GET', 'POST'])
 def myinformation():
+    infor=SQL_Infor(get_db())
     # 检查cookie是否为登录状态
     if not (session.get('login') and session.get('username') and session.get('privilege')):
         return redirect(url_for('logout'))
+
+    username = session['username']
+    p = session['privilege']
+    sidebar = GetSideBar(GetBar(p),'查看个人信息')
+
+    user={'privilege':p,'sex':'未填写','telephone':'未填写','born':'未填写'}
+    userinfor = infor.GetInfor(username)
+    if (len(userinfor) != 1):
+        pass
+    else:
+        myinfor = userinfor[0]
+        user['telephone'] = myinfor[1]
+        user['sex'] = myinfor[2]
+        user['born'] = myinfor[3]
+
+    return render_template('myinformation.html', username=username, sidebar=sidebar,user=user)
 
 ###################################################################################################
 @app.route(changeinformation_url, methods=['GET', 'POST'])
@@ -112,32 +133,34 @@ def changeinformation():
     # 检查cookie是否为登录状态
     if not (session.get('login') and session.get('username') and session.get('privilege')):
         return redirect(url_for('logout'))
+
     if(request.method=="POST"):
+        result = {'status': ''}
+        if not (session.get('login') and session.get('username') and session.get('privilege')):
+            result['status'] = "请刷新浏览器"
+            return jsonify(result)
+
         myjson = json.loads(request.get_data())
-        result={'status':''}
         username = myjson['username']
         oldpassword = myjson['oldpassword']
+        caozuo=myjson['caozuo']
 
         if not(Account.CheckPassword(username,oldpassword)):
             result['status']="原密码错误"
             return jsonify(result)
-
-        newpassword=myjson['newpassword']
-        if(newpassword!=""):
-            if(Account.UpdateAccount(username,newpassword)==1):
-                result['status']="修改密码成功\n"
-            else:
-                result['status'] = "修改密码失败\n"
-
-        sex=myjson['sex']
-        born=myjson['born']
-        telephone=myjson['telephone']
-        if(Infor.UpdateInfor(username,telephone,sex,born)==1):
-                result['status'] += "修改信息成功"
+        if(caozuo=='password'):
+            newpassword=myjson['newpassword']
+            if(newpassword!=""):
+                Account.UpdateAccount(username,newpassword)
+                result['status']="修改密码成功"
+                return jsonify(result)
         else:
-            result['status'] += "修改信息失败"
-
-        return jsonify(result)
+            sex=myjson['sex']
+            born=myjson['born']
+            telephone=myjson['telephone']
+            Infor.UpdateInfor(username,telephone,sex,born)
+            result['status'] = "修改信息成功"
+            return jsonify(result)
 
 
 
@@ -156,6 +179,112 @@ def changeinformation():
         user['born']=myinfor[3]
 
     return render_template("changeinformation.html",username=username,sidebar=sidebar,start=start,user=user)
+
+###################################################################################################
+@app.route(course_url, methods=['GET', 'POST'])
+def course():
+    Course= SQL_Course(get_db())
+
+    if (request.method == "POST"):
+        result = {'status': ''}
+        if not (session.get('login') and session.get('username') and session.get('privilege')):
+            result['status'] = "请刷新浏览器"
+            return jsonify(result)
+        myjson = json.loads(request.get_data())
+        caozuo=myjson['caozuo']
+        if(caozuo=="test"):
+            userid=myjson['userid']
+            testname=myjson['testname']
+            score=myjson['score']
+            mycourse1=myjson['course']
+            Course.changetestscore(userid,mycourse1,testname,score)
+            result['status'] = "更新成功"
+        elif(caozuo=="score"):
+            userid=myjson['userid']
+            score = myjson['score']
+            mycourse1 = myjson['course']
+            Course.changescore(userid, mycourse1, score)
+            result['status'] = "更新成功"
+        elif(caozuo=="add"):
+            testname=myjson['testname']
+            mycourse1 = myjson['course']
+            Course.addtest(testname,mycourse1)
+            result['status'] = "更新成功"
+        return jsonify(result)
+
+
+    if not (session.get('login') and session.get('username') and session.get('privilege')):
+        return redirect(url_for('logout'))
+
+    username = session['username']
+    p = session['privilege']
+    sidebar = GetSideBar(GetBar(p), '我的课程')
+
+    if(p==1):
+        mycourse=Course.SearchCourse_1(username)
+    elif(p==2):
+        mycourse=Course.SearchCourse_2(username)
+    elif(p==3):
+        mycourse=Course.SearchCourse_3()
+    else:
+        return redirect(url_for('logout'))
+
+    xcourse=request.args.get('course','')
+    seek=False
+    if(len(mycourse)!=0):
+        for i in mycourse:
+            if(i['name']==xcourse):
+                seek=True
+                break
+    if(seek==False):
+        return render_template("course.html", username=username, sidebar=sidebar, mycourse=mycourse)
+    else:
+        if(p==1):
+            infor=Course.Course_Infor(xcourse,username)
+            return render_template("mycourse.html",username=username,sidebar=sidebar,infor=infor)
+        else:
+            infor=Course.Course_Score(xcourse)
+            infor['name']=xcourse
+            return render_template("course_teacher.html",username=username,sidebar=sidebar,course=infor)
+
+###################################################################################################
+@app.route(addcourse_url, methods=['GET', 'POST'])
+def addcourse():
+    Account=SQL_Account(get_db())
+    Course=SQL_Course(get_db())
+
+    if (request.method == "POST"):
+        result = {'status': ''}
+        if not (session.get('login') and session.get('username') and session.get('privilege')):
+            result['status'] = "请刷新浏览器"
+            return jsonify(result)
+        elif((session.get('privilege')!=2)and(session.get('privilege')!=3)):
+            result['status'] = "请刷新浏览器"
+            return jsonify(result)
+        myjson = json.loads(request.get_data())
+        print(myjson)
+        username=myjson['username']
+        coursename=myjson['course']
+        seek=Course.addcourse(coursename,username)
+        if(seek!=False):
+            result['status']="增加成功"
+        else:
+            result['status']="该名称已存在"
+        return jsonify(result)
+
+    if not (session.get('login') and session.get('username') and session.get('privilege')):
+        return redirect(url_for('logout'))
+
+    username = session['username']
+    p = session['privilege']
+    sidebar = GetSideBar(GetBar(p), '创建课程')
+    if(p==1):
+        return redirect(url_for('select'))
+    elif(p==2):
+        return render_template("addcourse.html",username=username,sidebar=sidebar,p=p)
+    elif(p==3):
+        teachers=Account.getAllbyPrivilege(2)
+        return render_template("addcourse.html", username=username, sidebar=sidebar,p=p,teachers=teachers)
 
 
 ###################################################################################################

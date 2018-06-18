@@ -1,0 +1,260 @@
+{% extends "layout.html" %}
+{% block body %}
+
+<h2 id="course1">{{ course.name }}</h2>
+<br/>
+
+<strong>学生成绩</strong>
+<table class="table table-striped">
+              <thead>
+                <tr>
+					<th>学号</th>
+					<th>学生姓名</th>
+					{% for testname in course.test %} 
+					<th>{{testname}}</th>
+					{%endfor%}
+					<th>综合分数</th>
+					<th>操作</th>
+                </tr>
+              </thead>
+			  <tbody>
+				{% if (course.student).length!=0 %}
+                {% for i in course.student %}
+				<tr>
+					<td>{{ i.userid }}</td>
+					<td>{{ i.username }}</td>
+					{% for test in i.tests %}
+					<td>
+						<a href="javascript:show1('{{ i.userid }}','{{ i.username }}','{{ test.name }}',
+						'{{ test.score }}');">
+						{{ test.score }}
+						</a>
+					</td>
+					{% endfor %}
+					
+					<td>
+						<a href="javascript:show2('{{ i.userid }}','{{ i.username }}','{{ i.score }}');">
+						{{ i.score }}
+						</a>
+					</td>
+					<td><button class="btn btn-default" 
+						onclick="delete()">
+						移除该学生
+						</button>
+					</td>
+					
+				</tr>
+				
+				{% endfor %}
+				{%else%}
+				<tr>
+				<td>无</td>
+				
+				</tr>
+				{% endif %}
+				
+					
+					
+				
+				
+			</tbody>
+</table>
+			
+			
+<button class="btn btn-primary" onclick="window.location.href='/course';">返回</button>
+
+
+
+<div class="modal fade" id="testModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="myModalLabel">修改小测分数</h4>
+            </div>
+            <div class="modal-body">
+			<form class="form-horizontal" role="form">
+				<div class="form-group">
+                            <label for="user_id" class="col-sm-3 control-label">学号</label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" id="a_id" name="a_id" value=""
+                                       readonly="readonly">
+                            </div>
+                </div>
+				<div class="form-group">
+                            <label for="user_id" class="col-sm-3 control-label">学生姓名</label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" id="a_name" name="a_name" value=""
+                                       placeholder="" readonly="readonly">
+                            </div>
+                </div>
+				<div class="form-group">
+                            <label for="user_id" class="col-sm-3 control-label" id="test_label">test分数</label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" id="a_score" name="a_score" value=""
+                                       placeholder="请输入分数">
+                            </div>
+                </div>
+				
+			</form>
+			</div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal" onclick="shanchu()">删除</button>
+                <button type="button" class="btn btn-primary" onclick="tijiao1()">提交更改</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="scoreModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="myModalLabel">修改综合分数</h4>
+            </div>
+            <div class="modal-body">
+			<form class="form-horizontal" role="form">
+				<div class="form-group">
+                            <label for="user_id" class="col-sm-3 control-label">学号</label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" id="b_id" name="b_id" value=""
+                                       readonly="readonly">
+                            </div>
+                </div>
+				<div class="form-group">
+                            <label for="user_id" class="col-sm-3 control-label">学生姓名</label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" id="b_name" name="b_name" value=""
+                                       placeholder="" readonly="readonly">
+                            </div>
+                </div>
+				<div class="form-group">
+                            <label for="user_id" class="col-sm-3 control-label">综合分数</label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" id="b_score" name="b_score" value=""
+                                       placeholder="请输入分数">
+                            </div>
+                </div>
+				
+			</form>
+			</div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button type="button" class="btn btn-primary" onclick="tijiao2()">提交更改</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="myModalLabel"新增一个test</h4>
+            </div>
+            <div class="modal-body">
+			<form class="form-horizontal" role="form">
+				<div class="form-group">
+                            <label for="user_id" class="col-sm-3 control-label">test名</label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" id="c_name" name="c_name" value="">
+                            </div>
+             
+				
+			</form>
+			</div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button type="button" class="btn btn-primary" onclick="add()">提交更改</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+function show1(id,name,testname,score){
+		$('#testModal').modal('show');
+		$("#a_id").val(id);
+		$("#a_name").val(name);
+		$("#test_label").html(testname);
+		$("#a_score").val(score);
+}
+function show2(id,name,score){
+		$('#scoreModal').modal('show');
+		$("#b_id").val(id);
+		$("#b_name").val(name);
+		$("#b_score").val(score);
+}
+function show3(){
+$('#addModal').modal('show');
+}
+function tijiao1(){
+		var userid=$("#a_id").val();
+		var testname=$("#test_label").html();
+		var score=$("#a_score").val();
+		var course=$("#course1").html();
+		var dict1={'userid':userid,'testname':testname,'score':score,'caozuo':'test','course':course};
+		$.ajax({
+			  type: "post",
+			  contentType: "application/json; charset=UTF-8",
+			  url: "/course",
+			  xhrFields: {withCredentials: true},
+			  crossDomain: true,
+			  dataType: 'json',
+			  data:JSON.stringify(dict1),
+			  success:function(data){
+								 alert(data.status);
+								 location.replace(location.href);
+								}
+			});
+
+}
+function tijiao2(){
+		var userid=$("#b_id").val();
+		var score=$("#b_score").val();
+		var course=$("#course1").html();
+		var dict1={'userid':userid,'score':score,'caozuo':'score','course':course};
+		$.ajax({
+			  type: "post",
+			  contentType: "application/json; charset=UTF-8",
+			  url: "/course",
+			  xhrFields: {withCredentials: true},
+			  crossDomain: true,
+			  dataType: 'json',
+			  data:JSON.stringify(dict1),
+			  success:function(data){
+								 alert(data.status);
+								 location.replace(location.href);
+								}
+			});
+
+
+
+}
+
+function add(){
+		var testname=$("#c_name").val();
+		var course=$("#course1").html();
+		var dict1={'testname':testname,'caozuo':'add','course':course};
+		$.ajax({
+			  type: "post",
+			  contentType: "application/json; charset=UTF-8",
+			  url: "/course",
+			  xhrFields: {withCredentials: true},
+			  crossDomain: true,
+			  dataType: 'json',
+			  data:JSON.stringify(dict1),
+			  success:function(data){
+								 alert(data.status);
+								 location.replace(location.href);
+								}
+			});
+
+}
+
+
+
+</script>
+{% endblock %}

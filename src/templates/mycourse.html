@@ -1,0 +1,67 @@
+{% extends "layout.html" %}
+{% block body %}
+
+<h2>{{ infor.course }}</h2>
+<br/>
+<strong>授课老师</strong>
+<HR>
+<p>{{ infor.teacher }}</p>
+<br/>
+<strong>总分</strong>
+<HR>
+<p>{{ infor.score }}</p>
+<br/>
+<br/>
+<strong>平时小测</strong>
+		<table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>test</th>
+                  <th>分数</th>
+                  
+                </tr>
+              </thead>
+			  <tbody>
+				{% if (infor.test).length!=0 %}
+                {% for i in infor.test %}
+				<tr>
+					<td>{{ i.testname }}</td>
+					
+					<td>
+					{% if i.score!=None %}
+					{{ i.score }}
+					{%else%}
+					无
+					{%endif%}
+					</td>
+					
+				</tr>
+				
+				{% endfor %}
+				{%else%}
+				<tr>
+				<td>无</td>
+				<td>无</td>
+				
+				</tr>
+				{% endif %}
+				
+					
+					
+				
+				
+			</tbody>
+            </table>
+			
+			
+<button class="btn btn-primary" onclick="window.location.href='/course';">返回</button>
+
+
+
+<script type="text/javascript">
+
+
+
+
+</script>
+{% endblock %}

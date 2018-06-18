@@ -83,6 +83,18 @@ class SQL_Account:
         self.insertlog("admin", "删除用户")
         return status
 
+    def getAllbyPrivilege(self,privilege):
+        sql = "select username from %s where privilege=%s " %(AccountTable,privilege)
+        data = self.__db.select(sql)
+        result=[]
+        for i in data:
+            result.append(i[0])
+        return result
+
+    def getIDbyName(self,username):
+        sql = "select userid from %s where username='%s'" %(AccountTable,username)
+        data = self.__db.select(sql)
+        return data[0][0]
 
 
 
