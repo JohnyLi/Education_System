@@ -304,7 +304,8 @@ def addcourse():
         username=myjson['username']
         coursename=myjson['course']
         introduction=myjson['introduction']
-        seek=Course.addcourse(coursename,username,introduction)
+        time=myjson['time']
+        seek=Course.addcourse(coursename,username,introduction,time)
         if(seek!=False):
             result['status']="增加成功"
         else:

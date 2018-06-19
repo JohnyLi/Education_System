@@ -260,7 +260,7 @@ class SQL_Course:
         infor1=Account.GetInfor(username)
         if(infor1[0][3]!=1):
             return "该用户不为学生"
-        sql="select * from %s where studentid=%s"%(Student_Course_Table,userid)
+        sql="select * from %s where studentid=%s and courseid=%s"%(Student_Course_Table,userid,courseid)
         data=self.__db.select(sql)
         if(len(data)!=0):
             return "该学生已选课"
