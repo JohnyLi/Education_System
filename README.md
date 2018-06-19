@@ -15,12 +15,12 @@ students elective management and so on.
 Because I have no time, I use this simple framework instead of Spring.
 ## Environment configuration
 ### Python 3.6
-[exe for Windows](https://www.python.org/ftp/python/3.6.5/python-3.6.5-amd64.exe)
+[exe for Windows](https://www.python.org/ftp/python/3.6.5/python-3.6.5-amd64.exe) \n
 [tutorial for Linux](https://www.cnblogs.com/kimyeee/p/7250560.html)
 ### Install Dependencies
-> cd Education_System
+> cd Education_System \n
 > python -m pip install -r requirements.txt
 ## Run 
-> cd src
+> cd src \n
 > python Listener.py
 ## File Directory
