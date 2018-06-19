@@ -20,7 +20,8 @@ Because I have no time, I use this simple framework instead of Spring.
 ### Install Dependencies
 > cd Education_System <br/>
 > python -m pip install -r requirements.txt
-## Run 
+## Run Education_System
 > cd src <br/>
-> python Listener.py
+> python Listener.py <br/>
+Then you can use browser for url:"localhost" or "<Your IP>".<br/>
 ## File Directory
