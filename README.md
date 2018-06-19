@@ -9,7 +9,7 @@ students elective management and so on.
 * Web framework: Bootstrap
 * Server language: Python 3.6
 * Server framework: Flask
-* Database: MySql
+* Database: Sqlite
 ## Why Flask
 Because I have no time, I use this simple framework instead of Spring.
 ## File Directory

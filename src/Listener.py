@@ -221,8 +221,7 @@ def course():
         elif(caozuo=="add"):
             testname=myjson['testname']
             mycourse1 = myjson['course']
-            time=myjson['time']
-            Course.addtest(testname,mycourse1,time)
+            Course.addtest(testname,mycourse1)
             result['status'] = "更新成功"
         elif(caozuo=="tuike"):
             username=myjson['username']
