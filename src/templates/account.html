@@ -1,0 +1,377 @@
+{% extends "layout.html" %}
+{% block body %}
+
+<h2>用户管理</h2>
+<div class="form-group">
+<button class="btn btn-info" onclick="go(1);">学生</button>
+<button class="btn btn-info" onclick="go(2);">教师</button>
+</div>
+<button class="btn btn-primary" onclick="show3();">新增一个用户</button>
+
+<div class="table-responsive">
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>用户id</th>
+                  <th>用户名</th>
+                  <th>性别</th>
+                  <th>出生日期</th>
+				  <th>电话号码</th>
+				  <th>权限</th>
+				  <th>操作</th>
+                </tr>
+              </thead>
+			  <tbody>
+			  
+                {% for i in user %}
+				<tr>
+					<td>{{ i.userid }}</td>
+					<td>{{ i.username }}</td>
+					<td>{{ i.sex}}</td>
+					<td>{{ i.born }}</td>
+					<td>{{ i.telephone }}</td>
+					<td>{{ i.privilege }}</td>
+					<td>
+					<button class="btn btn-default" 
+						onclick=
+	"show1('{{ i.username }}','{{ i.sex }}','{{ i.born }}','{{ i.telephone }}','{{ i.privilege }}')">
+						修改
+						</button>
+					
+						<button class="btn btn-default" 
+						onclick=
+	"show2('{{ i.username }}','{{ i.sex }}','{{ i.born }}','{{ i.telephone }}','{{ i.privilege }}')">
+						删除
+						</button>
+					</td>
+				</tr>
+				{% endfor %}
+				
+				
+					
+					
+				
+				
+			</tbody>
+            </table>
+		
+			
+			
+			
+			
+</div>
+
+
+<div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="myModalLabel">新增一个用户</h4>
+            </div>
+            <div class="modal-body">
+			<form class="form-horizontal" role="form">
+				<div class="form-group">
+                            <label for="user_id" class="col-sm-3 control-label">用户名</label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" id="c_name" name="c_name" value=""
+                                       placeholder="请输入用户名">
+                            </div>
+                </div>
+				<div class="form-group">
+                            <label for="user_id" class="col-sm-3 control-label">性别</label>
+                            <div class="col-sm-9">
+                                <div class="btn-group">
+									<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" id="c_sex"></button>
+									<ul class="dropdown-menu" role="menu">
+										<li><a href="javascript:void(0);" onclick="sex('男','c')">男</a></li>
+										<li><a href="javascript:void(0);" onclick="sex('女','c')">女</a></li>
+									</ul>
+								</div>
+                            </div>
+                </div>
+				<div class="form-group">
+                            <label for="user_id" class="col-sm-3 control-label">出生日期</label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" id="c_born" name="c_born" value=""
+                                       placeholder="请输入出生日期">
+                            </div>
+                </div>
+				<div class="form-group">
+                            <label for="user_id" class="col-sm-3 control-label">电话号码</label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" id="c_telephone" name="c_telephone" value=""
+                                       placeholder="请输入电话号码">
+                            </div>
+                </div>
+				<div class="form-group">
+                            <label for="user_id" class="col-sm-3 control-label">权限</label>
+                            <div class="col-sm-9">
+                                <div class="btn-group">
+									<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" id="c_privilege"></button>
+									<ul class="dropdown-menu" role="menu">
+										<li><a href="javascript:void(0);" onclick="privilege('1','c')">1</a></li>
+										<li><a href="javascript:void(0);" onclick="privilege('2','c')">2</a></li>
+									</ul>
+								</div>
+                            </div>
+                </div>
+				<div class="form-group">
+                            <label for="user_id" class="col-sm-3 control-label">密码</label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" id="c_password" name="c_password" value=""
+                                       placeholder="请输入密码,不填则默认123456">
+                            </div>
+                </div>
+				
+			</form>
+			</div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button type="button" class="btn btn-primary" onclick="add()">提交更改</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="changeModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="myModalLabel">修改用户信息</h4>
+            </div>
+            <div class="modal-body">
+			<form class="form-horizontal" role="form">
+				<div class="form-group">
+                            <label for="user_id" class="col-sm-3 control-label">用户名</label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" id="a_name" name="a_name" value=""
+                                       placeholder="请输入用户名" readonly="readonly">
+                            </div>
+                </div>
+				<div class="form-group">
+                            <label for="user_id" class="col-sm-3 control-label">性别</label>
+                            <div class="col-sm-9">
+                                <div class="btn-group">
+									<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" id="a_sex"></button>
+									<ul class="dropdown-menu" role="menu">
+										<li><a href="javascript:void(0);" onclick="sex('男','a')">男</a></li>
+										<li><a href="javascript:void(0);" onclick="sex('女','a')">女</a></li>
+									</ul>
+								</div>
+                            </div>
+                </div>
+				<div class="form-group">
+                            <label for="user_id" class="col-sm-3 control-label">出生日期</label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" id="a_born" name="a_born" value=""
+                                       placeholder="请输入出生日期">
+                            </div>
+                </div>
+				<div class="form-group">
+                            <label for="user_id" class="col-sm-3 control-label">电话号码</label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" id="a_telephone" name="a_telephone" value=""
+                                       placeholder="请输入电话号码">
+                            </div>
+                </div>
+				<div class="form-group">
+                            <label for="user_id" class="col-sm-3 control-label">权限</label>
+                            <div class="col-sm-9">
+                                <div class="btn-group">
+									<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" id="a_privilege" disabled></button>
+									<ul class="dropdown-menu" role="menu">
+										<li><a href="javascript:void(0);" onclick="privilege('1','a')">1</a></li>
+										<li><a href="javascript:void(0);" onclick="privilege('2','a')">2</a></li>
+									</ul>
+								</div>
+                            </div>
+                </div>
+				<div class="form-group">
+                            <label for="user_id" class="col-sm-3 control-label">密码</label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" id="a_password" name="a_password" value=""
+                                       placeholder="请输入密码,不填则默认不修改">
+                            </div>
+                </div>
+				
+			</form>
+			</div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button type="button" class="btn btn-primary" onclick="change()">提交更改</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="myModalLabel">删除用户</h4>
+            </div>
+            <div class="modal-body">
+			<form class="form-horizontal" role="form">
+				<div class="form-group">
+                            <label for="user_id" class="col-sm-3 control-label">用户名</label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" id="b_name" name="b_name" value=""
+                                       placeholder="请输入用户名" readonly="readonly">
+                            </div>
+                </div>
+				<div class="form-group">
+                            <label for="user_id" class="col-sm-3 control-label">性别</label>
+                            <div class="col-sm-9">
+                                <div class="btn-group">
+									<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" id="b_sex" disabled></button>
+									
+								</div>
+                            </div>
+                </div>
+				<div class="form-group">
+                            <label for="user_id" class="col-sm-3 control-label">出生日期</label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" id="b_born" name="b_born" value=""
+                                       placeholder="请输入出生日期" readonly>
+                            </div>
+                </div>
+				<div class="form-group">
+                            <label for="user_id" class="col-sm-3 control-label">电话号码</label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" id="b_telephone" name="b_telephone" value=""
+                                       placeholder="请输入电话号码" readonly>
+                            </div>
+                </div>
+				<div class="form-group">
+                            <label for="user_id" class="col-sm-3 control-label">权限</label>
+                            <div class="col-sm-9">
+                                <div class="btn-group">
+									<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" id="b_privilege" disabled></button>
+									
+								</div>
+                            </div>
+                </div>
+				
+			</form>
+			</div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button type="button" class="btn btn-primary" onclick="delete1()">删除</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+function go(p){
+window.location.href="/account?privilege="+p;
+
+}
+function privilege(p,modal){
+var m=modal+"_privilege";
+$("#"+m).html(p);
+}
+function sex(p,modal){
+var m=modal+"_sex";
+$("#"+m).html(p);
+}
+function show1(username,sex,born,telephone,privilege){
+$('#changeModal').modal('show');
+$('#a_name').val(username);
+$('#a_sex').html(sex);
+$('#a_born').val(born);
+$('#a_telephone').val(telephone);
+$('#a_privilege').html(privilege);
+}
+function show2(username,sex,born,telephone,privilege){
+$('#deleteModal').modal('show');
+$('#b_name').val(username);
+$('#b_sex').html(sex);
+$('#b_born').val(born);
+$('#b_telephone').val(telephone);
+$('#b_privilege').html(privilege);
+}
+function show3(){
+$('#addModal').modal('show');
+}
+
+function change(){
+var username=$('#a_name').val();
+var sex=$('#a_sex').html();
+var born=$('#a_born').val();
+var telephone=$('#a_telephone').val();
+var password=$('#a_password').val();
+var privilege=$('#a_privilege').html();
+var dict1={'username':username,'sex':sex,'born':born,'telephone':telephone,'password':password,
+'privilege':privilege,'caozuo':'change'};
+$.ajax({
+			  type: "post",
+			  contentType: "application/json; charset=UTF-8",
+			  url: "/account",
+			  xhrFields: {withCredentials: true},
+			  crossDomain: true,
+			  dataType: 'json',
+			  data:JSON.stringify(dict1),
+			  success:function(data){
+								 alert(data.status);
+								 location.replace(location.href);
+								}
+	});
+
+
+}
+function add(){
+var username=$('#c_name').val();
+var sex=$('#c_sex').html();
+var born=$('#c_born').val();
+var password=$('#c_password').val();
+var telephone=$('#c_telephone').val();
+var privilege=$('#c_privilege').html();
+var dict1={'username':username,'sex':sex,'born':born,'telephone':telephone,'privilege':privilege,'password':password,
+'caozuo':'add'};
+$.ajax({
+			  type: "post",
+			  contentType: "application/json; charset=UTF-8",
+			  url: "/account",
+			  xhrFields: {withCredentials: true},
+			  crossDomain: true,
+			  dataType: 'json',
+			  data:JSON.stringify(dict1),
+			  success:function(data){
+								 alert(data.status);
+								 location.replace(location.href);
+								}
+	});
+
+
+}
+function delete1(){
+var username=$('#b_name').val();
+var sex=$('#b_sex').html();
+var born=$('#b_born').val();
+var telephone=$('#b_telephone').val();
+var privilege=$('#b_privilege').html();
+var dict1={'username':username,'sex':sex,'born':born,'telephone':telephone,'privilege':privilege,'caozuo':'delete'};
+$.ajax({
+			  type: "post",
+			  contentType: "application/json; charset=UTF-8",
+			  url: "/account",
+			  xhrFields: {withCredentials: true},
+			  crossDomain: true,
+			  dataType: 'json',
+			  data:JSON.stringify(dict1),
+			  success:function(data){
+								 alert(data.status);
+								 location.replace(location.href);
+								}
+	});
+
+
+}
+
+
+</script>
+{% endblock %}

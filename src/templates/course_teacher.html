@@ -38,7 +38,7 @@
 						</a>
 					</td>
 					<td><button class="btn btn-default" 
-						onclick="delete()">
+						onclick="delete1('{{i.username}}','{{course.name}}')">
 						移除该学生
 						</button>
 					</td>
@@ -61,9 +61,10 @@
 </table>
 			
 			
+<button class="btn" onclick="show3();">新增一个test</button>
+<button class="btn" onclick="show4();">修改课程信息</button>
+<button class="btn" onclick="show5();">添加学生</button>
 <button class="btn btn-primary" onclick="window.location.href='/course';">返回</button>
-
-
 
 <div class="modal fade" id="testModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -152,7 +153,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                <h4 class="modal-title" id="myModalLabel"新增一个test</h4>
+                <h4 class="modal-title" id="myModalLabel">新增一个test</h4>
             </div>
             <div class="modal-body">
 			<form class="form-horizontal" role="form">
@@ -162,12 +163,99 @@
                                 <input type="text" class="form-control" id="c_name" name="c_name" value="">
                             </div>
              
-				
+				</div>
 			</form>
 			</div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
                 <button type="button" class="btn btn-primary" onclick="add()">提交更改</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="changeModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="myModalLabel">修改课程信息</h4>
+            </div>
+            <div class="modal-body">
+			<form class="form-horizontal" role="form">
+				<div class="form-group">
+                            <label for="user_id" class="col-sm-3 control-label">原课程名</label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" id="d_oldname" name="d_oldname" value="{{ course.name}}"
+								 readonly>
+                            </div>
+             
+				</div>
+				<div class="form-group">
+                            <label for="user_id" class="col-sm-3 control-label">新课程名</label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" id="d_newname" name="d_newname" value="{{ course.name}}"
+								 placeholder="不填则默认不修改">
+                            </div>
+             
+				</div>
+				<div class="form-group">
+                            <label for="user_id" class="col-sm-3 control-label">开课时间</label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" id="d_time" name="d_time" 
+								value="{{course.time}}" placeholder="请输入开课时间">
+                            </div>
+             
+				</div>
+				
+				<div class="form-group">
+                            <label for="remark" class="col-sm-3 control-label">课程介绍</label>
+                            <div class="col-sm-9">
+                                <textarea  class="form-control"  name="remark" value="" id="d_intro"
+                                       placeholder="课程介绍" value="">{{course.intro}}</textarea>
+                            </div>
+                </div>
+			</form>
+			</div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button type="button" class="btn btn-primary" onclick="change()">提交更改</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="studentModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="myModalLabel">添加一枚学生</h4>
+            </div>
+            <div class="modal-body">
+			<form class="form-horizontal" role="form">
+				<div class="form-group">
+                            <label for="user_id" class="col-sm-3 control-label">课程名</label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" id="e_name" name="e_name" value="{{ course.name}}"
+								 readonly>
+                            </div>
+             
+				</div>
+				<div class="form-group">
+                            <label for="user_id" class="col-sm-3 control-label">学生名</label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" id="e_username" name="e_username" value=""
+								 placeholder="请输入学生名">
+                            </div>
+             
+				</div>
+				
+			</form>
+			</div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button type="button" class="btn btn-primary" onclick="student()">提交</button>
             </div>
         </div>
     </div>
@@ -189,6 +277,12 @@ function show2(id,name,score){
 }
 function show3(){
 $('#addModal').modal('show');
+}
+function show4(){
+$('#changeModal').modal('show');
+}
+function show5(){
+$('#studentModal').modal('show');
 }
 function tijiao1(){
 		var userid=$("#a_id").val();
@@ -251,6 +345,72 @@ function add(){
 								 location.replace(location.href);
 								}
 			});
+
+}
+
+function delete1(username,course){
+	var seek=confirm("确认删除吗？此操作不可复原!");
+	if(seek==false)return;
+	else{
+		var dict1={"caozuo":"delete","username":username,"course":course};
+		$.ajax({
+			  type: "post",
+			  contentType: "application/json; charset=UTF-8",
+			  url: "/course",
+			  xhrFields: {withCredentials: true},
+			  crossDomain: true,
+			  dataType: 'json',
+			  data:JSON.stringify(dict1),
+			  success:function(data){
+								 alert(data.status);
+								 location.replace(location.href);
+								}
+			});
+
+	}
+}
+
+function change(){
+	var oldname=$("#d_oldname").val();
+	var newname=$("#d_newname").val();
+	var time=$("#d_time").val();
+	var intro=$("#d_intro").val();
+	var dict1={"caozuo":"change","oldname":oldname,"newname":newname,"time":time,"intro":intro};
+	$.ajax({
+			  type: "post",
+			  contentType: "application/json; charset=UTF-8",
+			  url: "/course",
+			  xhrFields: {withCredentials: true},
+			  crossDomain: true,
+			  dataType: 'json',
+			  data:JSON.stringify(dict1),
+			  success:function(data){
+								 alert(data.status);
+								 location.replace(location.href);
+								}
+			});
+
+
+}
+function student(){
+	var course=$("#course1").html();
+	var username=$("#e_username").val();
+	if(username=="")return;
+	var dict1={"caozuo":"student","username":username,"course":course};
+	$.ajax({
+			  type: "post",
+			  contentType: "application/json; charset=UTF-8",
+			  url: "/course",
+			  xhrFields: {withCredentials: true},
+			  crossDomain: true,
+			  dataType: 'json',
+			  data:JSON.stringify(dict1),
+			  success:function(data){
+								 alert(data.status);
+								 location.replace(location.href);
+								}
+			});
+
 
 }
 

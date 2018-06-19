@@ -96,6 +96,12 @@ class SQL_Account:
         data = self.__db.select(sql)
         return data[0][0]
 
+    def getNamebyID(self,userid):
+        sql = "select username from %s where userid='%s'" % (AccountTable, userid)
+        data = self.__db.select(sql)
+        return data[0][0]
+
+
 
 
 

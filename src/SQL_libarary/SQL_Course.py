@@ -43,6 +43,8 @@ class SQL_Course:
     def GetUserid(self,username):
         sql = "select userid from %s where username='%s' " %(AccountTable,username)
         data = self.__db.select(sql)
+        if(len(data)==0):
+            return False
         return data[0][0]
 
     # 通过学生名查询其的课程
@@ -124,6 +126,10 @@ class SQL_Course:
         courseid=self.getCourseID(course)
         testlist=self.getCourseTest(courseid)
         test=[]
+        for i in testlist:
+            testname = self.getTestName(i)
+            test.append(testname)
+        mycourse['test'] = test
 
         sql="select studentid,username,score from %s s join %s a on userid=studentid where courseid=%s"\
             %(Student_Course_Table,AccountTable,courseid)
@@ -134,7 +140,6 @@ class SQL_Course:
             mytest = []
             for testid in testlist:
                 testname=self.getTestName(testid)
-                test.append(testname)
                 sql = "select score from %s where studentid=%s and testid=%s"%(Student_Test_Table,i[0],testid)
                 data1=self.__db.select(sql)
                 if(len(data1)==0):
@@ -145,7 +150,7 @@ class SQL_Course:
             mydict['tests']=mytest
 
             mycourse['student'].append(mydict)
-        mycourse['test']=test
+
         return mycourse
 
     def getCourseID(self,course):
@@ -197,13 +202,69 @@ class SQL_Course:
         status = self.__db.update(sql)
         return status
 
-    def addcourse(self,course,username):
+    def addcourse(self,course,username,introduction,time):
         sql = "select courseid from %s where name='%s'" % (CourseTable, course)
         data = self.__db.select(sql)
         if(len(data)!=0):
             return False
         account=SQL_Account(self.__db)
         userid=account.getIDbyName(username)
-        sql = "insert into %s (teacherid,name) values (%s,'%s')"%(CourseTable,userid,course)
+        sql = "insert into %s (teacherid,name,intro,time) values (%s,'%s','%s','%s')"\
+              %(CourseTable,userid,course,introduction,time)
         status = self.__db.update(sql)
         return status
+    def courseBYname(self,course):
+        sql = "select * from %s where name='%s'"%(CourseTable,course)
+        data = self.__db.select(sql)
+        if(len(data)==0):
+            return False
+        data=data[0]
+        result={'name':course,'time':data[4],'term':data[3],'intro':data[5]}
+        Account=SQL_Account(self.__db)
+        teacher=Account.getNamebyID(data[1])
+        result['teacher']=teacher
+        return result
+
+    def selectcourse(self,username,course):
+        courseid = self.getCourseID(course)
+        userid = self.GetUserid(username)
+        mycourse=self.SearchCourse_1(username)
+        for i in mycourse:
+            if(course==i['name']):
+                return False
+        sql = "insert into %s (courseid,studentid) values(%s,%s)"%(Student_Course_Table,courseid,userid)
+        status = self.__db.update(sql)
+        return status
+
+    def tuike(self,username,course):
+        courseid = self.getCourseID(course)
+        userid = self.GetUserid(username)
+        sql = "delete from %s where studentid=%s and courseid=%s"%(Student_Course_Table,userid,courseid)
+        status = self.__db.update(sql)
+        testlist=self.getCourseTest(courseid)
+        for i in testlist:
+            sql = "delete from %s where studentid=%s and testid=%s"%(Student_Test_Table,userid,i)
+            status = self.__db.update(sql)
+
+    def changecourse(self,oldname,newname,time,intro):
+        sql = "update %s set name='%s',time='%s',intro='%s' where name='%s'" %(CourseTable,newname,time,intro,oldname)
+        status = self.__db.update(sql)
+        return status
+
+    def addstudent(self,username,course):
+        courseid=self.getCourseID(course)
+        userid=self.GetUserid(username)
+        if(userid==False):
+            return "用户名不存在"
+        Account=SQL_Account(self.__db)
+        infor1=Account.GetInfor(username)
+        if(infor1[0][3]!=1):
+            return "该用户不为学生"
+        sql="select * from %s where studentid=%s"%(Student_Course_Table,userid)
+        data=self.__db.select(sql)
+        if(len(data)!=0):
+            return "该学生已选课"
+        else:
+            sql="insert into %s (courseid,studentid) values(%s,%s)"%(Student_Course_Table,courseid,userid)
+            status = self.__db.update(sql)
+            return "增加成功"

@@ -1,0 +1,51 @@
+{% extends "layout.html" %}
+{% block body %}
+
+<h2>{{ course.name }}</h2>
+<br/>
+<strong>授课老师</strong>
+<HR>
+<p>{{ course.teacher }}</p>
+<br/>
+<strong>授课时间</strong>
+<HR>
+<p>{{ course.time }}</p>
+<br/>
+<strong>课程介绍</strong>
+<HR>
+<p>{{ course.intro }}</p>
+<br/>
+
+
+{% if course.name in mycourse %}
+<button class="btn btn-primary" onclick="window.location.href='/course/select';">返回</button>
+<button class="btn" onclick="" disabled>您已选过该课</button>
+{% else %}
+<button class="btn btn-primary" onclick="window.location.href='/course/select';">返回</button>
+<button class="btn" onclick="select('{{course.name}}')" >现在选课</button>
+{% endif %}
+<script type="text/javascript">
+
+function select(course){
+	var username="{{username}}";
+	var dict1={"username":username,"course":course};
+	$.ajax({
+			  type: "post",
+			  contentType: "application/json; charset=UTF-8",
+			  url: "/course/select",
+			  xhrFields: {withCredentials: true},
+			  crossDomain: true,
+			  dataType: 'json',
+			  data:JSON.stringify(dict1),
+			  success:function(data){
+								 alert(data.status);
+								 location.replace(location.href);
+								}
+	});
+
+}
+
+
+
+</script>
+{% endblock %}

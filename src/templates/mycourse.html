@@ -55,11 +55,34 @@
 			
 			
 <button class="btn btn-primary" onclick="window.location.href='/course';">返回</button>
-
+<button class="btn btn-primary" onclick="tuike();">我要退课!</button>
 
 
 <script type="text/javascript">
+function tuike(){
+	var username="{{username}}";
+	var course="{{infor.course}}";
+	var seek=confirm("确认退课吗？此操作不可复原!");
+	if(seek==false)return;
+	else{
+		var dict1={"username":username,"course":course,"caozuo":"tuike"};
+		$.ajax({
+				  type: "post",
+				  contentType: "application/json; charset=UTF-8",
+				  url: "/course",
+				  xhrFields: {withCredentials: true},
+				  crossDomain: true,
+				  dataType: 'json',
+				  data:JSON.stringify(dict1),
+				  success:function(data){
+									 alert(data.status);
+									 location.replace(location.href);
+									}
+		});
+	}
 
+
+}
 
 
 

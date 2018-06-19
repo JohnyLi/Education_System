@@ -1,0 +1,44 @@
+{% extends "layout.html" %}
+{% block body %}
+
+<h2>选课</h2>
+<br/>
+
+{% for course in courses %}
+{% if course.name in mycourse %}
+
+    <div class="row">  
+               <div class="form-inline">  
+                   <button class="btn" onclick="go('{{ course.name }}');" disabled>{{ course.name }}</button>
+				   <p><Strong>授课老师&nbsp;</strong>{{ course.teacher }}</p>
+               </div>  
+    </div>  
+{% else %}
+
+   <div class="row">  
+               <div class="form-inline">  
+                   <button class="btn" onclick="go('{{ course.name }}');" >{{ course.name }}</button>
+				   <p><Strong>授课老师&nbsp;</strong>{{ course.teacher }}</p>
+               </div>  
+    </div>  
+
+{% endif %}
+{% endfor %}
+<script type="text/javascript">
+
+function go(course){
+	var href="/course/select?course="+course;
+	window.location.href=href;
+
+}
+
+
+
+
+
+
+
+
+</script>
+
+{% endblock %}

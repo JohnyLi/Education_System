@@ -20,8 +20,14 @@
 	</div>
 	{% endif %}
 	<br/>
-	<label for="course">科目名称</label>
-	<input type=text id="course" name=course class="form-control" value="">
+	<label for="course" id="course_label">科目名称</label>
+	<input type=text id="course" name=course class="form-control" value="" placeholder="请输入课程名称">
+	<br/>
+	<label for="course" id="course_label">开课时间</label>
+	<input type=text id="time" name=time class="form-control" value="" placeholder="请输入开课时间">
+	<br/>
+	<label for="course" id="intro_label">科目介绍</label>
+	<input type=text id="introduction" name=introduction class="form-control" value="" placeholder="请输入课程介绍">
 	<br/>
 	<button class="btn btn-danger" onclick="add({{p}});" >确认提交</button>
 	</div>
@@ -37,11 +43,23 @@ function add(p){
 	else if(p==3)
 		username=$("#username1").html();
 	var course=$("#course").val();
+	var introduction=$("#introduction").val();
+	var time=$("#time").val();
 	if(username=="未选"){
 		$("#label_u").html("执教老师不可为空");
 		return;
 	}
-	var dict1={'username':username,"course":course};
+	if(course==""){
+		$("#course_label").html("科目名称不可为空");
+		return;
+	}
+	if(introduction==""){
+		$("#intro_label").html("科目介绍不可为空");
+		return;
+	}
+	
+	
+	var dict1={'username':username,"course":course,'introduction':introduction,'time':time};
 	$.ajax({
 			  type: "post",
 			  contentType: "application/json; charset=UTF-8",

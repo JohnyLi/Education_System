@@ -1,5 +1,7 @@
 from Config.Link_db import *
 from Config.Config import *
+from SQL_libarary.SQL_Account import *
+from SQL_libarary.SQL_Course import *
 import time
 
 
@@ -15,6 +17,7 @@ myconfig=Aconfig()#获取config配置
 
 InforTable=myconfig.getvalue(table_section,"InformationTable")    #获取Information表名
 AccountTable=myconfig.getvalue(table_section,"AccountTable")    #获取Account表名
+CourseTable=myconfig.getvalue(table_section,"CourseTable")    #获取Course表名
 LogTable=myconfig.getvalue(table_section,"LogTable")    #获取日志表名
 
 #---------------------------------------------全局配置--------------------------------------------#
@@ -63,3 +66,54 @@ class SQL_Infor:
         status = self.__db.update(sql)
         self.insertlog(username,"更新用户信息")
         return status
+
+    def GetUserBYprivilege(self,privilege):
+        sql = "select i.userid,username,born,sex,telephone,privilege from %s i join %s a on a.userid=i.userid where privilege=%s"\
+              %(InforTable,AccountTable,privilege)
+        data = self.__db.select(sql)
+        result=[]
+        for i in data:
+            mydict={'userid':i[0],'username':i[1],'born':i[2],'sex':i[3],'telephone':i[4],'privilege':i[5]}
+            result.append(mydict)
+        return result
+
+    def DeleteAll_teacher(self,username):
+        Account=SQL_Account(self.__db)
+        Course = SQL_Course(self.__db)
+        userid=Account.getIDbyName(username)
+        sql="Delete from %s where userid=%s" %(InforTable,userid)
+        status = self.__db.update(sql)
+
+        Courselist=Course.SearchCourse_2(username)
+        for i in Courselist:
+            courseid=Course.getCourseID(i['name'])
+            testlist=Course.getCourseTest(courseid)
+            for testid in testlist:
+                sql = "Delete from %s where testid=%s" % (Test_Course_Table, testid)
+                status = self.__db.update(sql)
+                sql = "Delete from %s where testid=%s" % (Student_Test_Table, testid)
+                status = self.__db.update(sql)
+
+        sql="Delete from %s where userid=%s" %(CourseTable,userid)
+        status = self.__db.update(sql)
+        Account.DeleteAccount(username)
+        return True
+
+    def DeleteAll_student(self,username):
+        Account = SQL_Account(self.__db)
+
+        userid = Account.getIDbyName(username)
+        sql = "Delete from %s where studentid=%s" %(Student_Test_Table,userid)
+        status = self.__db.update(sql)
+        sql = "Delete from %s where studentid=%s" % (Student_Course_Table, userid)
+        status = self.__db.update(sql)
+        Account.DeleteAccount(username)
+        return True
+
+    def InsertInfor(self,username,password,telephone,sex,born,privilege):
+        Account = SQL_Account(self.__db)
+        Account.InsertAccount(username,password,privilege)
+        userid=Account.getIDbyName(username)
+        sql = "Insert into %s values(%s,'%s','%s','%s')"%(InforTable,userid,telephone,sex,born)
+        status = self.__db.update(sql)
+        return True
