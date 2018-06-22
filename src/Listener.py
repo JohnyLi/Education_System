@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-from flask import Flask, request, session,redirect, url_for,render_template,g,jsonify
+from flask import Flask, request, session,redirect, url_for,render_template,g,jsonify,send_from_directory,abort
 from flask_cors import CORS
 from Config import Config
 from Config.Link_db import *
@@ -7,7 +7,9 @@ from SQL_libarary.SQL_Account import *
 from SQL_libarary.SQL_Infor import *
 from SQL_libarary.SQL_Course import *
 from SQL_libarary.Func_lib import *
+from werkzeug.utils import secure_filename
 import json
+import os
 
 #---------------------------------------------全局配置--------------------------------------------#
 #全局变量配置
@@ -33,13 +35,19 @@ addcourse_url=myconfig.getvalue(route_section,"addcourse")
 course_url=myconfig.getvalue(route_section,"course")
 logout_url=myconfig.getvalue(route_section,"logout")
 account_url=myconfig.getvalue(route_section,"account")
+resource_url=myconfig.getvalue(route_section,"resource")
+download_url=myconfig.getvalue(route_section,"download")
+delete_url=myconfig.getvalue(route_section,"delete")
 
 
-studentbar={'查看个人信息':myinformation_url,'我的课程':course_url,'选课':select_url}
-teacherbar={'查看个人信息':myinformation_url,'我的课程':course_url,'创建课程':addcourse_url}
-adminbar={'查看个人信息':myinformation_url,'我的课程':course_url,'创建课程':addcourse_url,'用户管理':account_url}
+studentbar={'查看个人信息':myinformation_url,'我的课程':course_url,'选课':select_url,'资源':resource_url}
+teacherbar={'查看个人信息':myinformation_url,'我的课程':course_url,'创建课程':addcourse_url,'资源':resource_url}
+adminbar={'查看个人信息':myinformation_url,'我的课程':course_url,'创建课程':addcourse_url,'用户管理':account_url,'资源':resource_url}
 
-
+maxshow=5
+pageoffset=9
+UPLOAD_PATH='./documents/'
+ALLOWED_EXTENSIONS=set(['txt', 'png', 'jpg', 'xls', 'JPG', 'PNG', 'xlsx', 'gif', 'GIF','doc','docx','ppt','pptx','rar','zip','pdf'])
 start="1950,1,1"
 #---------------------------------------------全局配置--------------------------------------------#
 #===============================================页面==============================================#
@@ -444,9 +452,159 @@ def account():
         user = Infor.GetUserBYprivilege(1)
 
 
-    return render_template("account.html",username=username,p=p,sidebar=sidebar,user=user)
-
+    return render_template("account.html",username=username,p=p,sidebar=sidebar,user=user,start=start)
 ###################################################################################################
+@app.route(resource_url, methods=['GET','POST'], strict_slashes=False)
+def resource():
+    Course=SQL_Course(get_db())
+    if not (session.get('login') and session.get('username') and session.get('privilege')):
+        return redirect(url_for('logout'))
+
+    username = session['username']
+    p = session['privilege']
+    sidebar = GetSideBar(GetBar(p), '资源')
+
+    if (p == 1):
+        mycourse = Course.SearchCourse_1(username)
+    elif (p == 2):
+        mycourse = Course.SearchCourse_2(username)
+    elif (p == 3):
+        mycourse = Course.SearchCourse_3()
+    else:
+        return redirect(url_for('logout'))
+
+    course = request.args.get('course', '')
+    if(course=="") or (not checkcourse(course, mycourse)):
+        return render_template("course_1.html", username=username, sidebar=sidebar, mycourse=mycourse, p=p)
+
+
+    file_dir1 = request.args.get('file_dir','')
+    file_dir = UPLOAD_PATH + course + "/"
+    if not os.path.exists(file_dir):
+        os.makedirs(file_dir)   #若该课程未有文件夹则创建
+    file_dir = file_dir + file_dir1
+    try:
+        allfileset = getAllFile(file_dir)
+    except:
+        return render_template("course_1.html", username=username, sidebar=sidebar, mycourse=mycourse, p=p)
+
+    page = int(request.args.get("p", 1))
+    mydata=GetPageDict(page, allfileset, pageoffset - 2, maxshow)
+
+    if request.method == 'POST':
+        if not os.path.exists(file_dir):
+            os.makedirs(file_dir)
+        if request.files.__contains__('file'):
+            try:
+                f = request.files["file"]
+                if f and allowed_file(f.filename):  # 判断是否是允许上传的文件类型
+                    oldfilename=f.filename
+                    fname = secure_filename(f.filename)
+                    ext = getEXT(fname)  # 获取文件后缀
+                    noextfname=getFilename(oldfilename)
+                    nowfname=noextfname+"."+ext
+                    while(True):
+                        if not nowfname in allfileset[0]:
+                            break
+                        else:
+                            noextfname = getFilename(nowfname)
+                            nowfname=noextfname+"1"+"."+ext
+                    new_filename = nowfname  # 修改了上传的文件名
+                    f.save(os.path.join(file_dir, new_filename))  # 保存文件到upload目录
+                    code = 1
+                else:
+                    code=2
+            except:
+                code = 2
+        else:
+            code = 0
+        return render_template('resource.html', data=mydata,code=code,mydir=file_dir1,username=username,p=p,sidebar=sidebar,course=course)
+
+
+    return render_template('resource.html',data=mydata,mydir=file_dir1,username=username,p=p,sidebar=sidebar,course=course)
+###################################################################################################
+@app.route(download_url, methods=['GET','POST'])
+def download():
+    Course = SQL_Course(get_db())
+    if not (session.get('login') and session.get('username') and session.get('privilege')):
+        return redirect(url_for('logout'))
+
+    username = session['username']
+    p = session['privilege']
+    sidebar = GetSideBar(GetBar(p), '资源')
+    course = request.args.get('course', "")
+
+    if (p == 1):
+        mycourse = Course.SearchCourse_1(username)
+    elif (p == 2):
+        mycourse = Course.SearchCourse_2(username)
+    elif (p == 3):
+        mycourse = Course.SearchCourse_3()
+    else:
+        return redirect(url_for('logout'))
+    if (course == "") or (not checkcourse(course, mycourse)):
+        return render_template("course_1.html", username=username, sidebar=sidebar, mycourse=mycourse, p=p)
+    file_dir=request.args.get('file_dir',"")
+    if(file_dir==""):
+        abort(404)
+
+    filename=getFile(file_dir)
+    dir1=dir(file_dir)
+    dir1=UPLOAD_PATH+course+'/'+dir1
+    if request.method=="GET":
+        if os.path.isfile(os.path.join(dir1, filename)):
+            return send_from_directory(dir1,filename,as_attachment=True)
+        abort(404)
+###################################################################################################
+@app.route(delete_url, methods=['POST'])
+def delete():
+    Course = SQL_Course(get_db())
+    if (request.method == "POST"):
+        result = {'status': ''}
+        if not (session.get('login') and session.get('username') and session.get('privilege')):
+            result['status'] = "请刷新浏览器"
+            return jsonify(result)
+        elif(session.get('privilege')!=3) and (session.get('privilege')!=2):
+            result['status'] = "请刷新浏览器"
+            return jsonify(result)
+
+        username = session['username']
+        p = session['privilege']
+
+        if (p == 1):
+            mycourse = Course.SearchCourse_1(username)
+        elif (p == 2):
+            mycourse = Course.SearchCourse_2(username)
+        elif (p == 3):
+            mycourse = Course.SearchCourse_3()
+        else:
+            result['status'] = "请刷新浏览器"
+            return jsonify(result)
+        myjson = json.loads(request.get_data())
+        caozuo=myjson['caozuo']
+        course=myjson['course']
+        file_dir = myjson['file_dir']
+        if not checkcourse(course, mycourse):
+            result['status'] = "请刷新浏览器"
+            return jsonify(result)
+        if(caozuo=='delete'):
+            filename=getFile(file_dir)
+            dir1=dir(file_dir)
+            dir1=UPLOAD_PATH+course+dir1
+            newdir=dir1+'/'+filename
+            if os.path.exists(newdir):
+                if(os.path.isfile(newdir)):
+                    os.remove(newdir)
+                elif(os.path.isdir(newdir)):
+                    os.rmdir(newdir)
+                result['status'] = "删除成功"
+                return jsonify(result)
+        elif(caozuo=='folder'):
+            dir1 = UPLOAD_PATH + course + '/' +file_dir
+            os.makedirs(dir1)
+            result['status'] = "创建成功"
+            return jsonify(result)
+
 @app.route(logout_url)
 def logout():
     session.clear()
@@ -463,6 +621,11 @@ def GetBar(privilege):  #根据用户privilege返回不同的sidebar
     elif(privilege==1):
         return studentbar
 
+
+
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 # 《《《《《《《《《《《《《《《《《《《《《《《《小方法》》》》》》》》》》》》》》》》》》》》》》》》#
 #...............................................main..............................................#
