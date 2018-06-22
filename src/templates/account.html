@@ -308,11 +308,16 @@ $('#addModal').modal('show');
 
 function change(){
 var username=$('#a_name').val();
+if(username==""){alert('用户名不可为空');return;}
 var sex=$('#a_sex').html();
+if(sex==""){alert('性别不可为空');return;}
 var born=$('#a_born').val();
+if(born==""){alert('出生日期不可为空');return;}
 var telephone=$('#a_telephone').val();
+if(telephone==""){alert('电话号码不可为空');return;}
 var password=$('#a_password').val();
 var privilege=$('#a_privilege').html();
+if(privilege==""){alert('权限不可为空');return;}
 var dict1={'username':username,'sex':sex,'born':born,'telephone':telephone,'password':password,
 'privilege':privilege,'caozuo':'change'};
 $.ajax({
@@ -333,11 +338,17 @@ $.ajax({
 }
 function add(){
 var username=$('#c_name').val();
+if(username==""){alert('用户名不可为空');return;}
 var sex=$('#c_sex').html();
+if(sex==""){alert('性别不可为空');return;}
 var born=$('#c_born').val();
+if(born==""){alert('出生日期不可为空');return;}
 var password=$('#c_password').val();
+if(password==""){password='123456';}
 var telephone=$('#c_telephone').val();
+if(telephone==""){alert('电话号码不可为空');return;}
 var privilege=$('#c_privilege').html();
+if(privilege==""){alert('权限不可为空');return;}
 var dict1={'username':username,'sex':sex,'born':born,'telephone':telephone,'privilege':privilege,'password':password,
 'caozuo':'add'};
 $.ajax({

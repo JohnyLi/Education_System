@@ -9,7 +9,12 @@
 		var newdir='/resource';
 		window.location.href=newdir;
 	}
-
+	{% if msg %}
+	function replacenow(){
+	location.replace(location.href);
+	}
+	setTimeout("replacenow()",1000);
+	{% endif %}
 
 </script>
 
@@ -26,16 +31,15 @@
 </p>
 
      <div class="filebox">  
-          {% if code==1 %}
-           <p>上传成功</p>
-           {% endif %}
-           {% if code==0 %}
-           <p>等待上传</p>
-           {% endif %}
-           {% if code==2 %}
-           <p>上传失败</p>
-           {% endif %}
-		   
+	 {% if msg %}
+
+		<div class="alert alert-success">
+		  <strong>{{ msg }}</strong> 
+		  <p>将在1秒后刷新</p>
+		</div>
+		
+
+		{% endif %}
 		
        <table class="table table-striped">
               <thead>
@@ -49,7 +53,11 @@
 	   {% for x in data.showdict %}
         <tr>
 			<td>
+			{% if x.leixing=="文件夹" %}
 				<a href="/resource?file_dir={{mydir}}/{{x.fname}}&&course={{course}}" >{{x.fname}}</a>
+			{% elif x.leixing=="文件" %}
+				<a href="/download?file_dir={{mydir}}/{{x.fname}}&&course={{course}}" >{{x.fname}}</a>
+			{% endif %}
 			</td>
 			<td>{{x.leixing}}</td>
 			{% if p != 1%}

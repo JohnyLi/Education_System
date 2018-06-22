@@ -423,6 +423,9 @@ def account():
                 else:
                     result['status'] = "删除失败"
         elif(caozuo=='add'):
+            if(len(Account.GetInfor(username))!=0):
+                result['status'] = "此用户名已存在"
+                return jsonify(result)
             privilege=int(myjson['privilege'])
             password = myjson['password']
             if(password==""):
@@ -504,21 +507,22 @@ def resource():
                     noextfname=getFilename(oldfilename)
                     nowfname=noextfname+"."+ext
                     while(True):
-                        if not nowfname in allfileset[0]:
+                        dict1={'fname':nowfname,'leixing':'文件'}
+                        if not dict1 in allfileset:
                             break
                         else:
                             noextfname = getFilename(nowfname)
-                            nowfname=noextfname+"1"+"."+ext
+                            nowfname=noextfname+"(1)"+"."+ext
                     new_filename = nowfname  # 修改了上传的文件名
                     f.save(os.path.join(file_dir, new_filename))  # 保存文件到upload目录
-                    code = 1
+                    msg = fname+' 上传成功'
                 else:
-                    code=2
+                    msg = '为禁止文件类型或上传失败'
             except:
-                code = 2
+                msg = '上传失败'
         else:
-            code = 0
-        return render_template('resource.html', data=mydata,code=code,mydir=file_dir1,username=username,p=p,sidebar=sidebar,course=course)
+            msg = '上传失败'
+        return render_template('resource.html', data=mydata,msg=msg,mydir=file_dir1,username=username,p=p,sidebar=sidebar,course=course)
 
 
     return render_template('resource.html',data=mydata,mydir=file_dir1,username=username,p=p,sidebar=sidebar,course=course)
