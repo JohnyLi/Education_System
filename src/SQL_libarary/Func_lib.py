@@ -97,6 +97,7 @@ def checkcourse(coursename,mycourse):
     return False
 
 def GetPageDict(nowpage, data,pageoffset,maxshow):
+    nowpage=int(nowpage)
     #nowpage 当前页 data 数据 pageoffset 每页最多条数 maxshow 显示出来的页数
     mydict = {}
     if(len(data)==0):

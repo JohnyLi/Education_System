@@ -280,18 +280,25 @@ def course():
                 seek=True
                 break
     if(seek==False):
-        return render_template("course.html", username=username, sidebar=sidebar, mycourse=mycourse,p=p)
+        if(p==3):
+            infor = Course.GetAllCourseInfor()
+            page=request.args.get('p',1)
+            data=GetPageDict(page,infor, pageoffset , maxshow)
+        return render_template("course.html", username=username, sidebar=sidebar,data=data, mycourse=mycourse,p=p)
     else:
         if(p==1):
             infor=Course.Course_Infor(xcourse,username)
             return render_template("mycourse.html",username=username,sidebar=sidebar,infor=infor,p=p)
         else:
+            page=request.args.get('p',1)
             infor=Course.Course_Score(xcourse)
             x=Course.courseBYname(xcourse)
             infor['name']=xcourse
             infor['time']=x['time']
             infor['intro']=x['intro']
-            return render_template("course_teacher.html",username=username,sidebar=sidebar,course=infor,p=p)
+            infor['teacher']=x['teacher']
+            data=GetPageDict(page,infor['student'],pageoffset - 2, maxshow)
+            return render_template("course_teacher.html",username=username,sidebar=sidebar,course=infor,p=p,data=data)
 
 ###################################################################################################
 @app.route(addcourse_url, methods=['GET', 'POST'])
@@ -390,6 +397,7 @@ def selectcourse():
 def account():
     Infor=SQL_Infor(get_db())
     Account=SQL_Account(get_db())
+
     if (request.method == "POST"):
         result = {'status': ''}
         if not (session.get('login') and session.get('username') and session.get('privilege')):
@@ -444,7 +452,7 @@ def account():
     username = session['username']
     p = session['privilege']
     sidebar = GetSideBar(GetBar(p), '用户管理')
-
+    page= request.args.get('p', 1)
     privilege=request.args.get('privilege','1')
     if(p!=3):
         return redirect(url_for("introduction"))
@@ -453,9 +461,10 @@ def account():
         user=Infor.GetUserBYprivilege(2)
     else:
         user = Infor.GetUserBYprivilege(1)
+    data=GetPageDict(page,user, pageoffset - 2, maxshow)
 
 
-    return render_template("account.html",username=username,p=p,sidebar=sidebar,user=user,start=start)
+    return render_template("account.html",username=username,p=p,sidebar=sidebar,data=data,start=start,privilege=privilege)
 ###################################################################################################
 @app.route(resource_url, methods=['GET','POST'], strict_slashes=False)
 def resource():

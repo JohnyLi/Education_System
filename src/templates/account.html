@@ -23,7 +23,7 @@
               </thead>
 			  <tbody>
 			  
-                {% for i in user %}
+                {% for i in data.showdict %}
 				<tr>
 					<td>{{ i.userid }}</td>
 					<td>{{ i.username }}</td>
@@ -56,7 +56,34 @@
             </table>
 		
 			
+	{% if data %}
+	<div class="pull-right">
+	
+			<ul class="pagination"> 
 			
+				{% if data.showye==1%} 
+				<li class=''><a href='/account?p=1&privilege={{privilege}}'>首页</a></li>
+				<li class=''><a href='/account?p={{data.nowpage-1}}&privilege={{privilege}}'>上一页</a></li> 
+				{%endif%} 
+				
+				{% for dic in data.page_list %} 
+				{% if dic==data.nowpage%} 
+				<li class="active"><a href="/account?p={{dic}}&privilege={{privilege}}">{{dic}}</a></li> 
+				{%else%} 
+				<li><a href="/account?p={{dic}}&privilege={{privilege}}">{{dic}}</a></li> 
+				{%endif%} 
+				{%endfor%} 
+				
+				{% if data.nowpage < data.total%} 
+				<li class=''><a href='/account?p={{data.nowpage+1}}&privilege={{privilege}}'>下一页</a></li> 
+				<li class=''><a href='/account?p={{data.total}}&privilege={{privilege}}'>尾页</a></li>
+				{%endif%}
+			
+			
+			共{{data.total}}页 
+			</ul>
+	</div>
+	{% endif %}
 			
 			
 </div>

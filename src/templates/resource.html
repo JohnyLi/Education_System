@@ -49,26 +49,41 @@
                 </tr>
               </thead>
 			  <tbody>
-	
-	   {% for x in data.showdict %}
-        <tr>
+		{% for x in data.showdict %}
+	   {% if x.leixing=="文件" %}
+        <tr class="">
 			<td>
-			{% if x.leixing=="文件夹" %}
-				<a href="/resource?file_dir={{mydir}}/{{x.fname}}&&course={{course}}" >{{x.fname}}</a>
-			{% elif x.leixing=="文件" %}
 				<a href="/download?file_dir={{mydir}}/{{x.fname}}&&course={{course}}" >{{x.fname}}</a>
-			{% endif %}
+			
 			</td>
 			<td>{{x.leixing}}</td>
 			{% if p != 1%}
 			<td>
 			<button type="button" onclick="delete1('{{mydir}}/{{x.fname}}','{{course}}')">删除</button>
 			</td>
-			
 			{% endif %}
         </tr>
+		{% endif %}
+       {% endfor %}
+	
+	   {% for x in data.showdict %}
+	   {% if x.leixing=="文件夹" %}
+        <tr class="info">
+			<td>
+			
+				<a href="/resource?file_dir={{mydir}}/{{x.fname}}&&course={{course}}" >{{x.fname}}</a>
+			</td>
+			<td>{{x.leixing}}</td>
+			{% if p != 1%}
+			<td>
+			<button type="button" onclick="delete1('{{mydir}}/{{x.fname}}','{{course}}')">删除</button>
+			</td>
+			{% endif %}
+        </tr>
+		{% endif %}
        {% endfor %}
         
+	
        
 	   </tbody>
        </table>  

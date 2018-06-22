@@ -2,6 +2,7 @@
 {% block body %}
 
 <h2 id="course1">{{ course.name }}</h2>
+<h3>授课教师:{{ course.teacher }}</h3>
 <br/>
 
 <strong>学生成绩</strong>
@@ -19,7 +20,7 @@
               </thead>
 			  <tbody>
 				{% if (course.student).length!=0 %}
-                {% for i in course.student %}
+                {% for i in data.showdict %}
 				<tr>
 					<td>{{ i.userid }}</td>
 					<td>{{ i.username }}</td>
@@ -27,14 +28,22 @@
 					<td>
 						<a href="javascript:show1('{{ i.userid }}','{{ i.username }}','{{ test.name }}',
 						'{{ test.score }}');">
+						{% if test.score==None %}
+						暂未打分
+						{% else %}
 						{{ test.score }}
+						{% endif %}
 						</a>
 					</td>
 					{% endfor %}
 					
 					<td>
 						<a href="javascript:show2('{{ i.userid }}','{{ i.username }}','{{ i.score }}');">
+						{% if i.score==None %}
+						暂未打分
+						{% else %}
 						{{ i.score }}
+						{% endif %}
 						</a>
 					</td>
 					<td><button class="btn btn-default" 
@@ -65,6 +74,35 @@
 <button class="btn" onclick="show4();">修改课程信息</button>
 <button class="btn" onclick="show5();">添加学生</button>
 <button class="btn btn-primary" onclick="window.location.href='/course';">返回</button>
+
+{% if data %}
+	<div class="pull-right">
+	
+			<ul class="pagination"> 
+			
+				{% if data.showye==1%} 
+				<li class=''><a href='/course?p=1&course={{course.name}}'>首页</a></li>
+				<li class=''><a href='/course?p={{data.nowpage-1}}&course={{course.name}}'>上一页</a></li> 
+				{%endif%} 
+				
+				{% for dic in data.page_list %} 
+				{% if dic==data.nowpage%} 
+				<li class="active"><a href="/course?p={{dic}}&course={{course.name}}">{{dic}}</a></li> 
+				{%else%} 
+				<li><a href="/course?p={{dic}}&course={{course.name}}">{{dic}}</a></li> 
+				{%endif%} 
+				{%endfor%} 
+				
+				{% if data.nowpage < data.total%} 
+				<li class=''><a href='/course?p={{data.nowpage+1}}&course={{course.name}}'>下一页</a></li> 
+				<li class=''><a href='/course?p={{data.total}}&course={{course.name}}'>尾页</a></li>
+				{%endif%}
+			
+			
+			共{{data.total}}页 
+			</ul>
+	</div>
+{% endif %}
 
 <div class="modal fade" id="testModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-dialog">

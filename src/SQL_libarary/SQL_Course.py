@@ -86,6 +86,14 @@ class SQL_Course:
             result.append(mydict)
         return result
 
+    def GetAllCourseInfor(self):
+        sql = "select courseid,name,username,time,intro from %s join %s on teacherid=userid"%(CourseTable,AccountTable)
+        data = self.__db.select(sql)
+        result=[]
+        for i in data:
+            mydict={'courseid':i[0],'name':i[1],'teacher':i[2],'time':i[3],'intro':i[4]}
+            result.append(mydict)
+        return result
     def Course_Infor(self,course,studentname):
         sql= "select username,courseid from %s c join %s a on a.userid=c.teacherid where name='%s'" %(CourseTable,AccountTable,course)
         data = self.__db.select(sql)
