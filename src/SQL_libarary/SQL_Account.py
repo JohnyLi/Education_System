@@ -83,6 +83,7 @@ class SQL_Account:
         self.insertlog("admin", "删除用户")
         return status
 
+    #获取某权限下所有用户
     def getAllbyPrivilege(self,privilege):
         sql = "select username from %s where privilege=%s " %(AccountTable,privilege)
         data = self.__db.select(sql)
@@ -91,16 +92,19 @@ class SQL_Account:
             result.append(i[0])
         return result
 
+    #根据用户名获取其ID
     def getIDbyName(self,username):
         sql = "select userid from %s where username='%s'" %(AccountTable,username)
         data = self.__db.select(sql)
         return data[0][0]
 
+    #根据ID获取用户名
     def getNamebyID(self,userid):
         sql = "select username from %s where userid='%s'" % (AccountTable, userid)
         data = self.__db.select(sql)
         return data[0][0]
 
+    #重置数据库
     def reset(self):
 
             self.__db.reset()

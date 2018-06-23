@@ -18,7 +18,7 @@ myconfig=Aconfig()
 #Flask app 相关配置
 flask_section="flask"
 app=Flask(__name__)
-app.config.update(dict( DEBUG=True, SECRET_KEY=myconfig.getvalue(flask_section,"SECRET_KEY")))   #config
+app.config.update(dict(SECRET_KEY=myconfig.getvalue(flask_section,"SECRET_KEY")))   #config
 app.config.from_envvar('FLASKR_SETTINGS', silent=True)
 CORS(app, supports_credentials=True)    #跨域
 
@@ -46,11 +46,12 @@ teacherbar={'查看个人信息':myinformation_url,'我的课程':course_url,'�
 adminbar={'查看个人信息':myinformation_url,'我的课程':course_url,'创建课程':addcourse_url,
           '用户管理':account_url,'资源':resource_url,'高级管理员选项':super_url}
 
-maxshow=5
-pageoffset=9
-UPLOAD_PATH='./documents/'
-ALLOWED_EXTENSIONS=set(['txt', 'png', 'jpg', 'xls', 'JPG', 'PNG', 'xlsx', 'gif', 'GIF','doc','docx','ppt','pptx','rar','zip','pdf'])
-start="1950,1,1"
+maxshow=5   #翻页最大展示数
+pageoffset=9    #每页最大展示数
+UPLOAD_PATH='./documents/'  #上传目录
+ALLOWED_EXTENSIONS=set(['txt', 'png', 'jpg', 'xls', 'JPG',
+                        'PNG', 'xlsx', 'gif', 'GIF','doc','docx','ppt','pptx','rar','zip','pdf'])   #允许的文件的扩展名
+start="1950,1,1"    #日历最早日期
 #---------------------------------------------全局配置--------------------------------------------#
 #===============================================页面==============================================#
 '''
@@ -68,7 +69,7 @@ def close_db(error):
     if hasattr(g, 'db'):
         g.db.close()
 ###################################################################################################
-#登录界面
+#登录界面，允许所有人
 @app.route('/')
 @app.route(login_url, methods=['GET', 'POST'])
 def login():
@@ -82,7 +83,7 @@ def login():
             error = '用户名或密码错误'
         else:
             myAccount=myAccount[0]
-            AccountSHAPassword=myAccount[2]     #初始设计account表中第三列为加密后的密码
+            AccountSHAPassword=myAccount[2]
             SHA_password=GetSHA(password)
             if (AccountSHAPassword!=SHA_password):
                 error = '用户名或密码错误'
@@ -101,6 +102,7 @@ def login():
     return render_template('login.html', error=error)
 
 ###################################################################################################
+#介绍界面，允许所有登录用户
 @app.route(introduction_url)
 def introduction():
     #检查cookie是否为登录状态
@@ -748,6 +750,6 @@ def allowed_file(filename):
 # 《《《《《《《《《《《《《《《《《《《《《《《《小方法》》》》》》》》》》》》》》》》》》》》》》》》#
 #...............................................main..............................................#
 if __name__ == '__main__':
-    app.run(host='0.0.0.0',port=80)
+    app.run(host='0.0.0.0',port=80,debug=False)
 
 

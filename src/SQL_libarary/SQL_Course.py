@@ -86,6 +86,7 @@ class SQL_Course:
             result.append(mydict)
         return result
 
+    #获取所有课程的信息
     def GetAllCourseInfor(self):
         sql = "select courseid,name,username,time,intro from %s join %s on teacherid=userid"%(CourseTable,AccountTable)
         data = self.__db.select(sql)
@@ -129,6 +130,7 @@ class SQL_Course:
         result={'course':course,'teacher':teacher,'score':score,'test':test}
         return result
 
+    #获取指定课程的所有score成绩并排列好
     def Course_Score(self,course):
         mycourse={'course':course}
         courseid=self.getCourseID(course)
@@ -161,12 +163,14 @@ class SQL_Course:
 
         return mycourse
 
+    #获取课程ID
     def getCourseID(self,course):
         sql = "select courseid from %s where name='%s'" % (CourseTable, course)
         data = self.__db.select(sql)
         courseid = data[0][0]
         return courseid
 
+    #获取课程test列表
     def getCourseTest(self,courseid):
         sql = "select testid from %s where courseid=%s" % (Test_Course_Table, courseid)
         data = self.__db.select(sql)
@@ -175,16 +179,19 @@ class SQL_Course:
             testlist.append(i[0])
         return testlist
 
+    #根据testid获取test名
     def getTestName(self,testid):
         sql = "select testname from %s where testid=%s" % (Test_Course_Table, testid)
         data = self.__db.select(sql)
         return data[0][0]
+    #根据test名和course名获取test名
     def getTestID(self,testname,course):
         courseid=self.getCourseID(course)
         sql="select testid from %s where courseid=%s and testname='%s'" %(Test_Course_Table,courseid,testname)
         data = self.__db.select(sql)
         return data[0][0]
 
+    #更改某学生的test的分数
     def changetestscore(self,userid,course,testname,score):
         testid=self.getTestID(testname,course)
         sql = "select * from %s where studentid=%s and  testid=%s  "%(Student_Test_Table,userid,testid)
@@ -198,18 +205,21 @@ class SQL_Course:
             status = self.__db.update(sql)
             return status
 
+    #更改某学生的综合分数
     def changescore(self,userid,course,score):
         courseid=self.getCourseID(course)
         sql="update %s set score=%s where studentid=%s and courseid=%s"%(Student_Course_Table,score,userid,courseid)
         status = self.__db.update(sql)
         return status
 
+    #给某门课增加一个test
     def addtest(self,testname,course):
         courseid = self.getCourseID(course)
         sql="insert into %s (courseid,testname) values(%s,'%s')"%(Test_Course_Table,courseid,testname)
         status = self.__db.update(sql)
         return status
 
+    #增加一门课程
     def addcourse(self,course,username,introduction,time):
         sql = "select courseid from %s where name='%s'" % (CourseTable, course)
         data = self.__db.select(sql)
@@ -221,6 +231,8 @@ class SQL_Course:
               %(CourseTable,userid,course,introduction,time)
         status = self.__db.update(sql)
         return status
+
+    #获取某门课程的信息
     def courseBYname(self,course):
         sql = "select * from %s where name='%s'"%(CourseTable,course)
         data = self.__db.select(sql)
@@ -233,6 +245,7 @@ class SQL_Course:
         result['teacher']=teacher
         return result
 
+    #选课
     def selectcourse(self,username,course):
         courseid = self.getCourseID(course)
         userid = self.GetUserid(username)
@@ -244,6 +257,7 @@ class SQL_Course:
         status = self.__db.update(sql)
         return status
 
+    #退课
     def tuike(self,username,course):
         courseid = self.getCourseID(course)
         userid = self.GetUserid(username)
@@ -254,11 +268,13 @@ class SQL_Course:
             sql = "delete from %s where studentid=%s and testid=%s"%(Student_Test_Table,userid,i)
             status = self.__db.update(sql)
 
+    #更改课程信息
     def changecourse(self,oldname,newname,time,intro):
         sql = "update %s set name='%s',time='%s',intro='%s' where name='%s'" %(CourseTable,newname,time,intro,oldname)
         status = self.__db.update(sql)
         return status
 
+    #为某门课添加学生
     def addstudent(self,username,course):
         courseid=self.getCourseID(course)
         userid=self.GetUserid(username)

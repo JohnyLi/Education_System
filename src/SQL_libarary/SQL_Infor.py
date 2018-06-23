@@ -67,6 +67,7 @@ class SQL_Infor:
         self.insertlog(username,"更新用户信息")
         return status
 
+    #获取某权限下的所有用户
     def GetUserBYprivilege(self,privilege):
         sql = "select i.userid,username,born,sex,telephone,privilege from %s i join %s a on a.userid=i.userid where privilege=%s"\
               %(InforTable,AccountTable,privilege)
@@ -77,6 +78,7 @@ class SQL_Infor:
             result.append(mydict)
         return result
 
+    #删除该教师所有信息
     def DeleteAll_teacher(self,username):
         Account=SQL_Account(self.__db)
         Course = SQL_Course(self.__db)
@@ -99,6 +101,7 @@ class SQL_Infor:
         Account.DeleteAccount(username)
         return True
 
+    #删除该学生所有信息
     def DeleteAll_student(self,username):
         Account = SQL_Account(self.__db)
 
@@ -110,6 +113,7 @@ class SQL_Infor:
         Account.DeleteAccount(username)
         return True
 
+    #增加信息
     def InsertInfor(self,username,password,telephone,sex,born,privilege):
         Account = SQL_Account(self.__db)
         Account.InsertAccount(username,password,privilege)

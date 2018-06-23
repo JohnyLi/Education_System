@@ -28,7 +28,7 @@ def ArrayToDict(array): #将array变成dict,将莫名其妙的数据结构整理
         mydict[i[0]]=i[1]
     return mydict
 
-def SetDate(date):
+def SetDate(date):  #将yyyy.mm.dd转换成yyyy,mm,dd
     mydate=date.split('.')
     sentence=''
     for i in range(len(mydate)):
@@ -37,12 +37,12 @@ def SetDate(date):
             sentence+=','
     return sentence
 
-def getEXT(filename):
+def getEXT(filename):   #获取拓展名
     f=filename.split('.')
     for i in range(len(f)):
         if(i==len(f)-1):
             return f[i]
-def getFilename(filename):
+def getFilename(filename):  #获取除了拓展名之外的文件名
     f = filename.split('.')
     newname=""
     for i in range(len(f)):
@@ -53,12 +53,12 @@ def getFilename(filename):
             newname+="."
     return newname
 
-def getFile(file_dir):
+def getFile(file_dir):  #将路径中的文件名取出
     f = file_dir.split('/')
     for i in range(len(f)):
         if (i == len(f) - 1):
             return f[i]
-def dir(file_dir):
+def dir(file_dir):      #将路径除去文件名取出
     f = file_dir.split('/')
     newdir=""
     for i in range(len(f)):
@@ -69,7 +69,7 @@ def dir(file_dir):
             newdir+="/"
     return newdir
 
-def getAllFile(dir):
+def getAllFile(dir):    #获取该路径下文件与文件夹
     while(dir[len(dir)-1]=="/"):
         newdir=""
         for i in range(len(dir)):
@@ -90,7 +90,7 @@ def getAllFile(dir):
             set1.append(mydict)
     return set1
 
-def checkcourse(coursename,mycourse):
+def checkcourse(coursename,mycourse):   #查看是否有这门课
     for i in mycourse:
         if(coursename==i['name']):
             return True
