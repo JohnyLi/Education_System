@@ -15,8 +15,8 @@
 	<!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
 	<link href="../static/css/ie10-viewport-bug-workaround.css" rel="stylesheet">
 
-	<script src="../static/js/jquery.min.js"></script>
-	<script src="../static/js/bootstrap.min.js"></script>
+	<script src="http://cdn.static.runoob.com/libs/jquery/2.1.1/jquery.min.js"></script>
+	<script src="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 	
 
 
@@ -25,6 +25,7 @@
       <script src="https://cdn.bootcss.com/html5shiv/3.7.3/html5shiv.min.js"></script>
       <script src="https://cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
+  
 	
 <title>Login</title>
 
@@ -32,28 +33,27 @@
 
 
 <body>
+
 <div class="container">
 
-  <form class="form-signin" action= "/login" method=post>
+  <form class="form-signin" id='loginform' action= "/login" method=post  onsubmit="submit1()">
   
         <h2 class="form-signin-heading">Education System</h2>
 		{% if error %}<p class=error><strong>Error:</strong> {{ error }}</p>{% endif %}
 		<label for="username" class="sr-only">用户名</label>
-        <input type=text id="username" name=username class="form-control" placeholder="请输入用户名" required autofocus>
+        <input type=text id="username1" name=username class="form-control" placeholder="请输入用户名" required autofocus>
 		<label for="Password" class="sr-only">密码</label>
-        <input type=password id="password" name=password class="form-control" placeholder="请输入密码" required>
+        <input type=password id="password1" name=password class="form-control" placeholder="请输入密码" required>
 		
-        <div class="checkbox">
-          <label>
-            <input type="checkbox" value="remember-me"> 记住我
-			
-          </label>
+        <div>
+          
 		  <a href="/forget" class="pull-right">忘记密码</a>
 	    <button class="btn btn-lg btn-primary btn-block" type="submit">登录</button>
 
 		</div>
   </form>
    
+
    
 </div>
 </body>

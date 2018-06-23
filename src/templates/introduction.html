@@ -2,17 +2,53 @@
 {% block body %}
 
 <h1>欢迎使用Education System！</h1>
+<h3>Education System 是一个教学服务平台</h3>
+<HR>
+{% if p==3 %}
+<h4>您的身份为管理员,管理员有以下权限：</h4>
+
+<ul contenteditable="true">
+	<li><strong>查看个人信息</strong></li>
+	<p>查看及修改个人信息</p>
+	<li><strong>我的课程</strong></li>
+	<p>已添加课程的test添加、课程信息修改、学生增删及其分数的查询和修改</p>
+	<li><strong>创建课程</strong></li>
+	<p>新建一个课程，包括执教教师、开课时间、课程介绍等信息</p>
+	<li><strong>用户管理</strong></li>
+	<p>老师学生用户的增删及信息的修改</p>
+	<li><strong>资源</strong></li>
+	<p>课程文件的增删改查</p>
+</ul>
+{% elif p==2 %}
+<h4>您的身份为教师,教师有以下权限：</h4>
+
+<ul contenteditable="true">
+	<li><strong>查看个人信息</strong></li>
+	<p>查看及修改个人信息</p>
+	<li><strong>我的课程</strong></li>
+	<p>已添加课程的test添加、课程信息修改、学生增删及其分数的查询和修改</p>
+	<li><strong>创建课程</strong></li>
+	<p>新建一个课程，包括执教教师、开课时间、课程介绍等信息</p>
+	<li><strong>资源</strong></li>
+	<p>本人课程文件的增删改查</p>
+</ul>
+{% elif p==3 %}
+
+<h4>您的身份为学生,学生有以下权限：</h4>
+
+<ul contenteditable="true">
+	<li><strong>查看个人信息</strong></li>
+	<p>查看及修改个人信息</p>
+	<li><strong>我的课程</strong></li>
+	<p>已选课程分数的分数查看</p>
+	<li><strong>选课</strong></li>
+	<li><strong>资源</strong></li>
+	<p>已选课程的资源查看与下载</p>
+</ul>
 
 
 
-
-
-
-
-
-
-
-
+{% endif %}
 
 
 

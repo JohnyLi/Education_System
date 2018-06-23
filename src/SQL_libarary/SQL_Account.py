@@ -101,6 +101,12 @@ class SQL_Account:
         data = self.__db.select(sql)
         return data[0][0]
 
+    def reset(self):
+
+            self.__db.reset()
+            self.InsertAccount('admin','admin',3)
+            return True
+
 
 
 

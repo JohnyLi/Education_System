@@ -38,11 +38,13 @@ account_url=myconfig.getvalue(route_section,"account")
 resource_url=myconfig.getvalue(route_section,"resource")
 download_url=myconfig.getvalue(route_section,"download")
 delete_url=myconfig.getvalue(route_section,"delete")
-
+forget_url=myconfig.getvalue(route_section,"forget")
+super_url=myconfig.getvalue(route_section,"super")
 
 studentbar={'查看个人信息':myinformation_url,'我的课程':course_url,'选课':select_url,'资源':resource_url}
 teacherbar={'查看个人信息':myinformation_url,'我的课程':course_url,'创建课程':addcourse_url,'资源':resource_url}
-adminbar={'查看个人信息':myinformation_url,'我的课程':course_url,'创建课程':addcourse_url,'用户管理':account_url,'资源':resource_url}
+adminbar={'查看个人信息':myinformation_url,'我的课程':course_url,'创建课程':addcourse_url,
+          '用户管理':account_url,'资源':resource_url,'高级管理员选项':super_url}
 
 maxshow=5
 pageoffset=9
@@ -280,6 +282,7 @@ def course():
                 seek=True
                 break
     if(seek==False):
+        data=None
         if(p==3):
             infor = Course.GetAllCourseInfor()
             page=request.args.get('p',1)
@@ -617,7 +620,109 @@ def delete():
             os.makedirs(dir1)
             result['status'] = "创建成功"
             return jsonify(result)
+###################################################################################################
+@app.route(forget_url,methods=['GET','POST'])
+def forget():
+    Account=SQL_Account(get_db())
+    Infor=SQL_Infor(get_db())
+    if (session.get('login') or session.get('username') or session.get('privilege')):
+        session.clear()
+    check=None
+    error=None
+    username=None
+    if not (session.get('check')):
+        session.clear()
+        if (request.method == "POST"):
+            username=request.form['username']
+            myinfor=Account.GetInfor(username)
+            if(len(myinfor)==0):
+                error='用户名不存在'
+            else:
+                session['check']=1
+                check=1
+        return render_template('forget.html',error=error,check=check,username=username,start=start)
+    elif(session['check']==1):
+        if (request.method == "POST"):
+            username = request.form['username']
+            myinfor = Infor.GetInfor(username)
+            if (len(myinfor) == 0):
+                error = '用户名不存在'
+                check=None
+                session.pop('check')
+            else:
+                myinfor=myinfor[0]
+                telephone=request.form['telephone']
+                born=request.form['born']
+                if(myinfor[1]==int(telephone))and (myinfor[3]==born):
+                    check=2
+                    session['check']=2
+                else:
+                    check=1
+                    session['check']=1
+                    error='信息不正确'
+        return render_template('forget.html', error=error, check=check, username=username,start=start)
+    elif(session['check']==2):
+        if (request.method == "POST"):
+            username = request.form['username']
+            myinfor = Infor.GetInfor(username)
+            if (len(myinfor) == 0):
+                error = '用户名不存在'
+                check=None
+                session.pop('check')
+            else:
+                password1=request.form['password1']
+                password2 = request.form['password2']
+                if(password1==password2):
+                    Account.UpdateAccount(username,password1)
+                    check=3
+                    session['check']=3
+                else:
+                    error='两次密码不一致'
+                    check=2
+                    session['check']=2
+        return render_template('forget.html', error=error, check=check, username=username,start=start)
+###################################################################################################
+@app.route(super_url, methods=['POST','GET'])
+def super():
+    Account=SQL_Account(get_db())
+    if (request.method == "POST"):
+        result = {'status': ''}
+        if not (session.get('login') and session.get('username') and session.get('privilege')):
+            result['status'] = "请刷新浏览器"
+            return jsonify(result)
+        elif(session.get('privilege')!=3):
+            result['status'] = "请刷新浏览器"
+            return jsonify(result)
+        myjson=json.loads(request.get_data())
+        username=myjson['username']
+        password=myjson['password']
+        caozuo=myjson['caozuo']
+        if(caozuo=='resetdatabase'):
+            if(Account.CheckPassword(username,password)):
+                if(Account.reset()):
+                    result['status'] = "重置数据库完成"
+                    return jsonify(result)
+                else:
+                    result['status'] = "重置数据库失败"
+                    return jsonify(result)
+            else:
+                result['status'] = "密码错误"
+                return jsonify(result)
 
+
+    if not (session.get('login') and session.get('username') and session.get('privilege')):
+        return redirect(url_for('logout'))
+    username = session['username']
+    p = session['privilege']
+    sidebar = GetSideBar(GetBar(p), '高级管理员选项')
+
+    if(p!=3):
+        return redirect(url_for('logout'))
+
+    return render_template("super.html", username=username, sidebar=sidebar, p=p)
+
+
+###################################################################################################
 @app.route(logout_url)
 def logout():
     session.clear()

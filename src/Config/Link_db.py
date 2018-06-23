@@ -65,7 +65,7 @@ class Link_db:
     #数据库重置
     def reset(self):
         sql=open(init_path,'rb')
-        self.__cursor.execute(sql.read().decode('utf-8'))
+        self.__cursor.executescript(sql.read().decode('utf-8'))
         self.__db.commit()
 
 

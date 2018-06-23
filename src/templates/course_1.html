@@ -7,8 +7,11 @@
 <button class="btn" onclick="go('{{ course.name }}');">{{ course.name }}</button>
 {% else %}
 <p>还未选过课</p>
+{% if p==1 %}
 <button class="btn btn-primary" onclick="window.location.href='/course/select';">现在去选课</button>
-
+{% elif p==2%}
+<button class="btn btn-primary" onclick="window.location.href='/course/select';">现在去创建课程</button>
+{% endif%}
 {% endfor %}
 
 
