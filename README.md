@@ -116,7 +116,63 @@
 	testname test的名字 [string]
 ![test_course表](https://raw.githubusercontent.com/JohnyLi/MyPicture/master/Education_System/test_course.png)
 
+## 功能实现原理阐述
+### Web 监听
+* 本程序运用了Flask框架。
+![web](https://raw.githubusercontent.com/JohnyLi/MyPicture/master/Education_System/web.png)
+* 只需在方法前加上装饰器并指定路径即可。
+### html页面获取数据及执行运算
+* Flask中用的是jinja2表达式
+* 例如下图我在/introduction中返回了模板introduction.html。
+![fig1](https://raw.githubusercontent.com/JohnyLi/MyPicture/master/Education_System/html1.png) 
+<br/>
+![fig2](https://raw.githubusercontent.com/JohnyLi/MyPicture/master/Education_System/html2.png)
+<br/>
+![fig3](https://raw.githubusercontent.com/JohnyLi/MyPicture/master/Education_System/html3.png)
+<br/>
+![fig4](https://raw.githubusercontent.com/JohnyLi/MyPicture/master/Education_System/html4.png)
+<br/>
+![fig5](https://raw.githubusercontent.com/JohnyLi/MyPicture/master/Education_System/html5.png)
+<br/>
 
+* 可以看到图2是对p进行运算，即可根据p的值做出相应展示。
+* 图3中可以获得username的值。
+* 图4是在layout.html中加入了一个body，就可以令其他html页面选择继承其页面。
+* 图5是在introduction.html中，继承了layout.html，返回时就可以直接获取到layout.html的其他部分代码并拼接。
+
+### 用户状态
+* 本程序中主要用Cookies来保存用户状态。
+* Flask中提供了一种session的cookies，可以根据程序密钥对cookies进行可逆加密，即可以实现将用户状态保存至cookies中且用户只可删除无法修改。
+* 在登录成功后，程序将会上传session保存至cookies，如下图。<br/>
+![fig1](https://raw.githubusercontent.com/JohnyLi/MyPicture/master/Education_System/user1.png)
+* 然后在除了登录页面之外的页面，每次访问都会对cookies进行检查 <br/>
+![fig2](https://raw.githubusercontent.com/JohnyLi/MyPicture/master/Education_System/user2.png)
+* 三个session，缺一不可，缺少一个则送至logout清除cookies然后回到login。这样有效的防止了未登录却可以对教务系统进行访问的事故。
+* 在某些只允许高级用户前进的页面或者操作，将对其session中的privilege进行进一步核查，以防低级用户访问高级用户进行危险操作。
+
+### 数据库连接与线程优化
+* 为了防止每次对数据库操作都要连接一次数据库浪费资源，用了以下方法避免并保证每条线程单一连接。
+* Flask 提供了一种g的对象，g对象和访问一一对应。
+* 在下图中，设计了一个get_db()方法和close_db()的方法。
+![fig1](https://raw.githubusercontent.com/JohnyLi/MyPicture/master/Education_System/database.png)
+* 在某些需要操作数据库的页面方法中，会先执行get_db()获取数据库连接。
+* close_db()对在页面方法上下文结束后执行，即若g对象中存在数据库连接则对其进行关闭。
+
+### 数据库操作
+* 对数据库进行操作的页面需要执行get_db()获取连接对象。然后通过该连接对象创建需要的SQL_libarary中的对象。SQL_libarary中不对数据库进行连接，仅包含对数据库进行操作的sql语句与执行的方法，所以需要获得连接对象。
+* 例如下图中登录页面需要对Account表进行查询。首先通过数据库连接对象创建Account对象，然后根据账号密码并加密然后对表中进行查询操作。
+<br/>
+![fig1](https://raw.githubusercontent.com/JohnyLi/MyPicture/master/Education_System/database1.png)
+![fig2](https://raw.githubusercontent.com/JohnyLi/MyPicture/master/Education_System/database2.png)
+
+
+### 页面操作执行
+* 在本程序中，页面一般使用表单和ajax进行post操作。
+* 例如在用户管理页面，图一和图二，修改用户信息时用的是ajax。服务器会对其信息进行处理并返回一个json包含了status。返回后页面就会alert出status的值。一般是成功或者失败。
+* 再例如在上传资源时，图三，用的是表单。服务器会处理上传文件并返回新页面包含是否成功的信息。
+![fig1](https://raw.githubusercontent.com/JohnyLi/MyPicture/master/Education_System/caozuo1.png)
+![fig2](https://raw.githubusercontent.com/JohnyLi/MyPicture/master/Education_System/caozuo2.png)
+![fig3](https://raw.githubusercontent.com/JohnyLi/MyPicture/master/Education_System/caozuo3.png)
 
 
 
