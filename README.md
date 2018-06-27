@@ -4,6 +4,9 @@
 * 我们的项目名叫 Education System。
 * 包含的功能有：权限管理、用户修改个人信、管理员修改用户信息、测试分数发布、选课系统、课程资源等。
 * 测试样例部署在 119.29.231.205，访问http://119.29.231.205 即可。
+* 提供账户: 
+学生 用户名：科比 密码：123456 <br/>
+	    教师 用户名：汪峰 密码：123456 <br/>
 ## 功能简介
 <strong>这是一个教学服务平台，该服务平台分为三个主要用户服务功能。权限分为了三级，学生、教师和管理员。</strong>
 
@@ -126,15 +129,15 @@
 * Flask中用的是jinja2表达式
 * 例如下图我在/introduction中返回了模板introduction.html。
 ![fig1](https://raw.githubusercontent.com/JohnyLi/MyPicture/master/Education_System/html1.png) 
-
+<br/>fig1<br/>
 ![fig2](https://raw.githubusercontent.com/JohnyLi/MyPicture/master/Education_System/html2.png)
-
+<br/>fig2<br/>
 ![fig3](https://raw.githubusercontent.com/JohnyLi/MyPicture/master/Education_System/html3.png)
-
+<br/>fig3<br/>
 ![fig4](https://raw.githubusercontent.com/JohnyLi/MyPicture/master/Education_System/html4.png)
-
+<br/>fig4<br/>
 ![fig5](https://raw.githubusercontent.com/JohnyLi/MyPicture/master/Education_System/html5.png)
-
+<br/>fig5<br/>
 * 可以看到图2是对p进行运算，即可根据p的值做出相应展示。
 * 图3中可以获得username的值。
 * 图4是在layout.html中加入了一个body，就可以令其他html页面选择继承其页面。
@@ -180,11 +183,11 @@
 * 再例如在上传资源时，图三，用的是表单。服务器会处理上传文件并返回新页面包含是否成功的信息。
 
 ![fig1](https://raw.githubusercontent.com/JohnyLi/MyPicture/master/Education_System/caozuo1.png)
-
+<br/>fig1<br/>
 ![fig2](https://raw.githubusercontent.com/JohnyLi/MyPicture/master/Education_System/caozuo2.png)
-
+<br/>fig2<br/>
 ![fig3](https://raw.githubusercontent.com/JohnyLi/MyPicture/master/Education_System/caozuo3.png)
-
+<br/>fig3<br/>
 
 
 
